@@ -1,9 +1,9 @@
 package com.iobuilders.bank.poc.application.rest.controller
 
+import com.iobuilders.bank.poc.application.rest.request.RegisterUserRequest
+import com.iobuilders.bank.poc.application.rest.response.UserResponse
 import com.iobuilders.bank.poc.application.usecase.user.FindUserUseCase
 import com.iobuilders.bank.poc.application.usecase.user.RegisterUserUseCase
-import com.iobuilders.bank.poc.domain.User
-import com.iobuilders.bank.poc.application.rest.dto.RegisterUserRequest
 import jakarta.validation.Valid
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -13,9 +13,9 @@ import org.springframework.web.bind.annotation.*
 class UserController(val registerUserUseCase: RegisterUserUseCase, val findUserUseCase: FindUserUseCase) {
 
     @GetMapping
-    fun findAllUsers(): ResponseEntity<List<User>> = ResponseEntity.ok(findUserUseCase.findAllUsers())
+    fun findAllUsers(): ResponseEntity<List<UserResponse>> = ResponseEntity.ok(findUserUseCase.findAllUsers())
 
-    @PostMapping
-    fun createUser(@Valid @RequestBody registerUserRequest: RegisterUserRequest): ResponseEntity<User> =
+    @PostMapping(path = ["/registry"])
+    fun createUser(@Valid @RequestBody registerUserRequest: RegisterUserRequest): ResponseEntity<UserResponse> =
         ResponseEntity.ok(registerUserUseCase.registerUser(registerUserRequest))
 }

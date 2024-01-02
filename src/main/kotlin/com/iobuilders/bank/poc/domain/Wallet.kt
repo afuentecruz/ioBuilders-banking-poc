@@ -1,4 +1,3 @@
 package com.iobuilders.bank.poc.domain
 
-class Wallet {
-}
+data class Wallet(val id: Long? = null, val userId: Long, val balance: Money)

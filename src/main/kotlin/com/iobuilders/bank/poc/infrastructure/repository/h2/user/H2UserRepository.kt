@@ -2,36 +2,30 @@ package com.iobuilders.bank.poc.infrastructure.repository.h2.user
 
 import com.iobuilders.bank.poc.domain.repository.UserRepository
 import com.iobuilders.bank.poc.domain.User
-import com.iobuilders.bank.poc.application.rest.dto.RegisterUserRequest
+import com.iobuilders.bank.poc.domain.exception.UserNotFoundException
 import org.springframework.stereotype.Component
+import java.lang.RuntimeException
+import kotlin.jvm.optionals.getOrElse
 
 @Component
 class H2UserRepository(private val userRepository: SpringDataH2UserRepository) : UserRepository {
 
     override fun findAllUsers(): List<User> {
-        return userRepository.findAll().let { entities ->
-            entities.map { entity ->
-                User(
-                    id = entity.id!!,
-                    username = entity.username,
-                    password = entity.password
-                )
+        return userRepository.findAll().let { userEntities ->
+            userEntities.map {
+                UserEntity.toDomain(it)
             }
         }
     }
 
-    override fun createUser(registerUserRequest: RegisterUserRequest): User {
-        return userRepository.save(
-            UserEntity(
-                username = registerUserRequest.username,
-                password = registerUserRequest.password
-            )
-        )
-            .let {
-                User(
-                    id = it.id!!,
-                    username = it.username, password = it.password
-                )
-            }
+    override fun createUser(user: User): User {
+        userRepository.save(UserEntity.fromDomain(user)).apply {
+            return UserEntity.toDomain(this)
+        }
+    }
+
+    override fun findUserById(id: Long): User {
+        userRepository.findById(id).getOrElse { throw UserNotFoundException("User with id $id not found") }
+            .apply { return UserEntity.toDomain(this) }
     }
 }

@@ -8,7 +8,7 @@ import java.time.LocalDateTime
 open class BaseEntity : Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "`id`", updatable = false, insertable = false)
     var id: Long? = null
 
