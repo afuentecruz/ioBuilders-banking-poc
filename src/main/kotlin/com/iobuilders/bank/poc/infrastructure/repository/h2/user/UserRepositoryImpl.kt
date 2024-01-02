@@ -3,9 +3,10 @@ package com.iobuilders.bank.poc.infrastructure.repository.h2.user
 import com.iobuilders.bank.poc.application.repository.UserRepository
 import com.iobuilders.bank.poc.domain.User
 import com.iobuilders.bank.poc.infrastructure.rest.dto.RegisterUserRequest
-import org.springframework.context.annotation.Lazy
+import org.springframework.stereotype.Component
 
-class UserH2RepositoryImpl(@Lazy val userH2Repository: UserH2Repository) : UserRepository {
+@Component
+class UserRepositoryImpl(private val userH2Repository: UserH2Repository) : UserRepository {
     override fun findAllUsers(): List<User> {
         return userH2Repository.findAll().let { entities ->
             entities.map { entity ->
