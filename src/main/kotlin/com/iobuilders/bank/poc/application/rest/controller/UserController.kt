@@ -1,11 +1,10 @@
-package com.iobuilders.bank.poc.infrastructure.rest.controller
+package com.iobuilders.bank.poc.application.rest.controller
 
 import com.iobuilders.bank.poc.application.usecase.user.FindUserUseCase
 import com.iobuilders.bank.poc.application.usecase.user.RegisterUserUseCase
 import com.iobuilders.bank.poc.domain.User
-import com.iobuilders.bank.poc.infrastructure.rest.dto.RegisterUserRequest
+import com.iobuilders.bank.poc.application.rest.dto.RegisterUserRequest
 import jakarta.validation.Valid
-import org.apache.coyote.Response
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 

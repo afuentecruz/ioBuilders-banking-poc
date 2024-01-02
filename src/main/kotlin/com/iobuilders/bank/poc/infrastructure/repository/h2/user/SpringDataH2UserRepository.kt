@@ -4,5 +4,5 @@ import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
 
 @Repository
-interface UserH2Repository : JpaRepository<UserEntity, Long>
+interface SpringDataH2UserRepository : JpaRepository<UserEntity, Long>
 

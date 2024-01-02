@@ -1,6 +1,6 @@
 package com.iobuilders.bank.poc.infrastructure.configuration
 
-import com.iobuilders.bank.poc.application.service.user.UserService
+import com.iobuilders.bank.poc.domain.service.UserService
 import com.iobuilders.bank.poc.application.usecase.user.FindUserUseCase
 import com.iobuilders.bank.poc.application.usecase.user.RegisterUserUseCase
 import org.springframework.context.annotation.Bean

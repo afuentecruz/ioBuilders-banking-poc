@@ -1,4 +1,4 @@
-package com.iobuilders.bank.poc.infrastructure.rest.dto
+package com.iobuilders.bank.poc.application.rest.dto
 
 import jakarta.validation.constraints.NotBlank
 
