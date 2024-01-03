@@ -15,11 +15,11 @@ class WalletController(
 
     @PostMapping(path = ["/{userId}/create"])
     fun createWallet(@PathVariable userId: Long): ResponseEntity<WalletResponse> =
-        ResponseEntity.ok(createWalletUseCase.createUserWallet(userId))
+        createWalletUseCase.createUserWallet(userId).let { ResponseEntity.ok(it) }
 
     @GetMapping(path = ["/{userId}"])
     fun getUserWallets(@PathVariable userId: Long): ResponseEntity<List<WalletResponse>> =
-        ResponseEntity.ok(walletDetailsUseCase.getUserWallets(userId))
+        walletDetailsUseCase.getUserWallets(userId).let { ResponseEntity.ok(it) }
 
 }
 

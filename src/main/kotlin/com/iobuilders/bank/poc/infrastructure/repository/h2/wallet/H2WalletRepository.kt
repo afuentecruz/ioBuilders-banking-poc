@@ -12,5 +12,4 @@ class H2WalletRepository(private val walletRepository: SpringDataH2WalletReposit
     override fun findWalletsByUserId(userId: Long): List<Wallet> =
         walletRepository.findAllByUserId(userId).map { WalletEntity.toDomain(it) }
 
-
 }

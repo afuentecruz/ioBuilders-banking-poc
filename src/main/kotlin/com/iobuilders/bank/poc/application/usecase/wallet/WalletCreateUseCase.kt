@@ -7,8 +7,8 @@ import com.iobuilders.bank.poc.domain.service.WalletService
 
 class WalletCreateUseCase(private val userService: UserService, private val walletService: WalletService) {
     fun createUserWallet(userId: Long): WalletResponse = userService.findUser(userId).let { user ->
-        walletService.createWallet(user).run {
-            WalletResponse.toResponse(this)
+        walletService.createWallet(user).let {
+            WalletResponse.toResponse(it)
         }
     }
 }

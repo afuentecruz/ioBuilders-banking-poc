@@ -13,9 +13,10 @@ import org.springframework.web.bind.annotation.*
 class UserController(val registerUserUseCase: UserRegistryUseCase, val findUserUseCase: UserDetailsUseCase) {
 
     @GetMapping
-    fun findAllUsers(): ResponseEntity<List<UserResponse>> = ResponseEntity.ok(findUserUseCase.findAllUsers())
+    fun findAllUsers(): ResponseEntity<List<UserResponse>> =
+        findUserUseCase.findAllUsers().let { ResponseEntity.ok(it) }
 
     @PostMapping(path = ["/registry"])
     fun createUser(@Valid @RequestBody registerUserRequest: RegisterUserRequest): ResponseEntity<UserResponse> =
-        ResponseEntity.ok(registerUserUseCase.registerUser(registerUserRequest))
+        registerUserUseCase.registerUser(registerUserRequest).let { ResponseEntity.ok(it) }
 }

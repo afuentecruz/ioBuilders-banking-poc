@@ -16,7 +16,7 @@ class WalletServiceImpl(private val walletRepository: WalletRepository) : Wallet
         logger.info { "creating wallet for userId ${user.id}" }
         return walletRepository
             .createWallet(Wallet(user = user, balance = Money(amount = 0F, currency = MoneyCurrency.FIAT)))
-            .apply {
+            .also {
                 logger.info { "wallet for userId ${user.id} succesfully created with id ${this.id}" }
             }
     }

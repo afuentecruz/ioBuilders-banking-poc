@@ -9,22 +9,17 @@ import kotlin.jvm.optionals.getOrElse
 @Component
 class H2UserRepository(private val userRepository: SpringDataH2UserRepository) : UserRepository {
 
-    override fun findAllUsers(): List<User> {
-        return userRepository.findAll().let { userEntities ->
-            userEntities.map {
-                UserEntity.toDomain(it)
-            }
+    override fun findAllUsers(): List<User> = userRepository.findAll().let { userEntities ->
+        userEntities.map {
+            UserEntity.toDomain(it)
         }
     }
 
-    override fun createUser(user: User): User {
-        userRepository.save(UserEntity.toEntity(user)).apply {
-            return UserEntity.toDomain(this)
-        }
+    override fun createUser(user: User): User = userRepository.save(UserEntity.toEntity(user)).let {
+        UserEntity.toDomain(it)
     }
 
-    override fun findUserById(id: Long): User {
+    override fun findUserById(id: Long): User =
         userRepository.findById(id).getOrElse { throw UserNotFoundException("User with id $id not found") }
-            .apply { return UserEntity.toDomain(this) }
-    }
+            .let { UserEntity.toDomain(it) }
 }
