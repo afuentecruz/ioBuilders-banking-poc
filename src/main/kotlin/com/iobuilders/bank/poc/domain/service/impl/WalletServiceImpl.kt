@@ -15,7 +15,7 @@ class WalletServiceImpl(private val walletRepository: WalletRepository) : Wallet
     override fun createWallet(user: User): Wallet {
         logger.info { "creating wallet for userId ${user.id}" }
         return walletRepository
-            .createWallet(Wallet(user = user, balance = Money(amount = 0F, currency = MoneyCurrency.FIAT)))
+            .saveWallet(Wallet(user = user, balance = Money(amount = 0F, currency = MoneyCurrency.FIAT)))
             .also {
                 logger.info { "wallet for userId ${user.id} successfully created with id ${it.id}" }
             }

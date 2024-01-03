@@ -30,9 +30,12 @@ dependencies {
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.3.0")
     implementation("io.github.microutils:kotlin-logging-jvm:2.0.11")
     runtimeOnly("com.h2database:h2")
-    testImplementation("org.springframework.boot:spring-boot-starter-test")
-    testImplementation("org.jetbrains.kotlin:kotlin-test")
-    testImplementation("io.mockk:mockk:1.12.0")
+    testImplementation("org.springframework.boot:spring-boot-starter-test") {
+        exclude("org.junit.vintage", "junit-vintage-engine")
+        exclude("org.mockito", "mockito-core")
+    }
+    testImplementation("org.junit.jupiter:junit-jupiter-engine:5.8.1")
+    testImplementation("com.ninja-squad:springmockk:3.0.1")
 }
 
 tasks.withType<KotlinCompile> {
