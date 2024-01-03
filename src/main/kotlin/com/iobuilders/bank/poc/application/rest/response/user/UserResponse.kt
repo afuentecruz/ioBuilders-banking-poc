@@ -1,4 +1,4 @@
-package com.iobuilders.bank.poc.application.rest.response
+package com.iobuilders.bank.poc.application.rest.response.user
 
 import com.iobuilders.bank.poc.domain.User
 
@@ -8,5 +8,5 @@ data class UserResponse(
     companion object
 }
 
-fun UserResponse.Companion.fromDomain(user: User) =
+fun UserResponse.Companion.toResponse(user: User) =
     UserResponse(id = user.id!!, username = user.username)

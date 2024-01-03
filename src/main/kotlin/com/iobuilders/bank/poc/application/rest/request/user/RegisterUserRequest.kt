@@ -1,4 +1,4 @@
-package com.iobuilders.bank.poc.application.rest.request
+package com.iobuilders.bank.poc.application.rest.request.user
 
 import com.iobuilders.bank.poc.domain.User
 import jakarta.validation.constraints.Email

@@ -1,9 +1,9 @@
 package com.iobuilders.bank.poc.infrastructure.configuration
 
-import com.iobuilders.bank.poc.domain.service.UserService
-import com.iobuilders.bank.poc.application.usecase.user.FindUserUseCase
-import com.iobuilders.bank.poc.application.usecase.user.RegisterUserUseCase
-import com.iobuilders.bank.poc.application.usecase.wallet.CreateWalletUseCase
+import com.iobuilders.bank.poc.application.service.UserServiceImpl
+import com.iobuilders.bank.poc.application.usecase.user.UserDetailsUseCase
+import com.iobuilders.bank.poc.application.usecase.user.UserRegistryUseCase
+import com.iobuilders.bank.poc.application.usecase.wallet.WalletCreateUseCase
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
@@ -11,11 +11,11 @@ import org.springframework.context.annotation.Configuration
 class UseCaseConfiguration {
 
     @Bean
-    fun createUserUseCase(userService: UserService): RegisterUserUseCase = RegisterUserUseCase(userService)
+    fun createUserUseCase(userService: UserServiceImpl): UserRegistryUseCase = UserRegistryUseCase(userService)
 
     @Bean
-    fun findUserUseCase(userService: UserService): FindUserUseCase = FindUserUseCase(userService)
+    fun findUserUseCase(userService: UserServiceImpl): UserDetailsUseCase = UserDetailsUseCase(userService)
 
     @Bean
-    fun createWalletUseCase(userService: UserService): CreateWalletUseCase = CreateWalletUseCase(userService)
+    fun createWalletUseCase(userService: UserServiceImpl): WalletCreateUseCase = WalletCreateUseCase(userService)
 }
