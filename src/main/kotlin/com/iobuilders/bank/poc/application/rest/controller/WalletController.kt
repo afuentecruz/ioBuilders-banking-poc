@@ -3,11 +3,7 @@ package com.iobuilders.bank.poc.application.rest.controller
 import com.iobuilders.bank.poc.application.rest.response.wallet.WalletResponse
 import com.iobuilders.bank.poc.application.usecase.wallet.WalletCreateUseCase
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/wallets")

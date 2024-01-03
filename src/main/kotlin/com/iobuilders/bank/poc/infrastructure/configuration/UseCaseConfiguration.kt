@@ -1,9 +1,9 @@
 package com.iobuilders.bank.poc.infrastructure.configuration
 
-import com.iobuilders.bank.poc.application.service.UserServiceImpl
 import com.iobuilders.bank.poc.application.usecase.user.UserDetailsUseCase
 import com.iobuilders.bank.poc.application.usecase.user.UserRegistryUseCase
 import com.iobuilders.bank.poc.application.usecase.wallet.WalletCreateUseCase
+import com.iobuilders.bank.poc.domain.service.impl.UserServiceImpl
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 

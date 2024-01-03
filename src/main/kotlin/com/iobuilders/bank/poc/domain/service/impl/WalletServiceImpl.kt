@@ -1,4 +1,4 @@
-package com.iobuilders.bank.poc.application.service
+package com.iobuilders.bank.poc.domain.service.impl
 
 import com.iobuilders.bank.poc.domain.Wallet
 import com.iobuilders.bank.poc.domain.service.WalletService

@@ -1,4 +1,4 @@
-package com.iobuilders.bank.poc.application.service
+package com.iobuilders.bank.poc.domain.service.impl
 
 import com.iobuilders.bank.poc.domain.User
 import com.iobuilders.bank.poc.domain.repository.UserRepository
@@ -11,6 +11,9 @@ class UserServiceImpl(private val userRepository: UserRepository) : UserService 
 
     override fun findAll(): List<User> = userRepository.findAllUsers()
 
+    override fun findUser(userId: Long): User =
+        userRepository.findUserById(userId)
+
     override fun createUser(user: User): User {
         logger.info { "creating user ${user.username}" }
         return userRepository.createUser(user).also {
@@ -18,6 +21,4 @@ class UserServiceImpl(private val userRepository: UserRepository) : UserService 
         }
     }
 
-    override fun findUser(userId: Long): User =
-        userRepository.findUserById(userId)
 }

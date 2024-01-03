@@ -1,8 +1,8 @@
 package com.iobuilders.bank.poc.infrastructure.repository.h2.user
 
-import com.iobuilders.bank.poc.domain.repository.UserRepository
 import com.iobuilders.bank.poc.domain.User
 import com.iobuilders.bank.poc.domain.exception.UserNotFoundException
+import com.iobuilders.bank.poc.domain.repository.UserRepository
 import org.springframework.stereotype.Component
 import kotlin.jvm.optionals.getOrElse
 

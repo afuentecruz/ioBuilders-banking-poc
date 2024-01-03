@@ -1,13 +1,8 @@
 package com.iobuilders.bank.poc.infrastructure.repository.h2.wallet
 
-import com.iobuilders.bank.poc.domain.Money
-import com.iobuilders.bank.poc.domain.MoneyCurrency
-import com.iobuilders.bank.poc.domain.User
-import com.iobuilders.bank.poc.domain.Wallet
 import com.iobuilders.bank.poc.infrastructure.repository.h2.BaseEntity
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
-import jakarta.persistence.OneToOne
 import jakarta.persistence.Table
 
 
