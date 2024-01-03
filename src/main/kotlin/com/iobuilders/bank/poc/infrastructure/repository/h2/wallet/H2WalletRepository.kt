@@ -7,6 +7,10 @@ import org.springframework.stereotype.Component
 @Component
 class H2WalletRepository(private val walletRepository: SpringDataH2WalletRepository) : WalletRepository {
     override fun createWallet(wallet: Wallet): Wallet =
-        WalletEntity.toDomain(walletRepository.save(WalletEntity.toEntity(wallet)))
+        walletRepository.save(WalletEntity.toEntity(wallet)).let { return WalletEntity.toDomain(it) }
+
+    override fun findWalletsByUserId(userId: Long): List<Wallet> =
+        walletRepository.findAllByUserId(userId).map { WalletEntity.toDomain(it) }
+
 
 }

@@ -8,8 +8,9 @@ import jakarta.persistence.Table
 @Entity
 @Table(name = "`user`")
 class UserEntity(
+    public override var id: Long? = null,
     @Column(name = "`username`") val username: String,
     @Column(name = "`password`") val password: String
-) : BaseEntity() {
+) : BaseEntity(id) {
     companion object
 }
