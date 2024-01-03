@@ -6,4 +6,5 @@ import com.iobuilders.bank.poc.domain.Wallet
 interface WalletService {
     fun createWallet(user: User): Wallet
     fun findUserWallets(userId: Long): List<Wallet>
+    fun depositWallet(walletId: Long): List<Wallet>
 }

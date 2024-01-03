@@ -3,6 +3,7 @@ package com.iobuilders.bank.poc.infrastructure.configuration
 import com.iobuilders.bank.poc.application.usecase.user.UserDetailsUseCase
 import com.iobuilders.bank.poc.application.usecase.user.UserRegistryUseCase
 import com.iobuilders.bank.poc.application.usecase.wallet.WalletCreateUseCase
+import com.iobuilders.bank.poc.application.usecase.wallet.WalletDepositUseCase
 import com.iobuilders.bank.poc.application.usecase.wallet.WalletDetailsUseCase
 import com.iobuilders.bank.poc.domain.service.impl.UserServiceImpl
 import com.iobuilders.bank.poc.domain.service.impl.WalletServiceImpl
@@ -25,4 +26,8 @@ class UseCaseConfiguration {
     @Bean
     fun walletDetailsUseCase(walletService: WalletServiceImpl): WalletDetailsUseCase =
         WalletDetailsUseCase(walletService)
+
+    @Bean
+    fun walletDepositUseCase(walletService: WalletServiceImpl): WalletDepositUseCase =
+        WalletDepositUseCase(walletService)
 }
