@@ -22,12 +22,3 @@ class WalletEntity(
 }
 
 // TODO convertir este userId en una FK al uso que se traiga la entidad usuario
-fun WalletEntity.Companion.fromDomain(wallet: Wallet) =
-    WalletEntity(amount = wallet.balance.amount, currency = wallet.balance.currency.name, userId = wallet.userId)
-
-fun WalletEntity.Companion.toDomain(walletEntity: WalletEntity) =
-    Wallet(
-        id = walletEntity.id,
-        userId = walletEntity.userId,
-        balance = Money(amount = walletEntity.amount, currency = MoneyCurrency.valueOf(walletEntity.currency))
-    )
