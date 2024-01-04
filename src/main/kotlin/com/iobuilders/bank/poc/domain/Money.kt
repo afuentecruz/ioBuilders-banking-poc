@@ -1,3 +1,3 @@
 package com.iobuilders.bank.poc.domain
 
-data class Money (val amount: Float, val currency: MoneyCurrency)
+data class Money(var amount: Float, val currency: MoneyCurrency)

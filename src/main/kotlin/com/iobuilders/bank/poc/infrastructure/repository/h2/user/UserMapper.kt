@@ -2,8 +2,8 @@ package com.iobuilders.bank.poc.infrastructure.repository.h2.user
 
 import com.iobuilders.bank.poc.domain.User
 
-fun UserEntity.Companion.toEntity(user: User): UserEntity =
-    UserEntity(id = user.id, username = user.username, password = user.password)
+fun User.toEntity(): UserEntity =
+    UserEntity(id = this.id, username = this.username, password = this.password)
 
-fun UserEntity.Companion.toDomain(userEntity: UserEntity): User =
-    User(id = userEntity.id, username = userEntity.username, password = userEntity.password)
+fun UserEntity.toDomain(): User =
+    User(id = this.id, username = this.username, password = this.password)

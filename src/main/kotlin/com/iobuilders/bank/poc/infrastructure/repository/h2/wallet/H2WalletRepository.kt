@@ -6,11 +6,16 @@ import com.iobuilders.bank.poc.domain.repository.WalletRepository
 import org.springframework.stereotype.Component
 
 @Component
-class H2WalletRepository(private val walletRepository: SpringDataH2WalletRepository) : WalletRepository {
+class H2WalletRepository(private val h2WalletRepository: SpringDataH2WalletRepository) : WalletRepository {
+
     override fun saveWallet(wallet: Wallet): Wallet =
-        walletRepository.save(WalletEntity.toEntity(wallet)).let { return WalletEntity.toDomain(it) }
+        h2WalletRepository.save(wallet.toEntity()).toDomain()
 
     override fun findWalletsByUserId(userId: Long): List<Wallet> =
-        walletRepository.findAllByUserId(userId).ifEmpty { throw UserWalletNotFoundException(userId) }.map { WalletEntity.toDomain(it) }
+        h2WalletRepository.findAllByUserId(userId).ifEmpty { throw UserWalletNotFoundException(userId) }
+            .map { it.toDomain() }
+
+    override fun findWalletCurrency(walletId: Long, currency: String): Wallet? =
+        h2WalletRepository.findByIdAndCurrency(walletId, currency)?.toDomain()
 
 }

@@ -8,6 +8,6 @@ import com.iobuilders.bank.poc.domain.Wallet
 fun Wallet.Companion.walletTestData(
     id: Long? = 1L,
     user: User = User.userTestData(),
-    balance: Money = Money(amount = 1F, currency = MoneyCurrency.FIAT)
+    balance: Money = Money(amount = 1F, currency = MoneyCurrency.EUR)
 ) = Wallet(id = id, user = user, balance = balance)
 

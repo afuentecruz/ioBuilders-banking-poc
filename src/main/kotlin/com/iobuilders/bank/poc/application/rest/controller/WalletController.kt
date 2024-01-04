@@ -1,6 +1,6 @@
 package com.iobuilders.bank.poc.application.rest.controller
 
-import com.iobuilders.bank.poc.application.rest.request.wallet.DepositWalletRequest
+import com.iobuilders.bank.poc.application.rest.request.wallet.WalletDepositRequest
 import com.iobuilders.bank.poc.application.rest.response.wallet.WalletResponse
 import com.iobuilders.bank.poc.application.usecase.wallet.WalletCreateUseCase
 import com.iobuilders.bank.poc.application.usecase.wallet.WalletDepositUseCase
@@ -28,9 +28,9 @@ class WalletController(
     @PostMapping(path = ["/{walletId}/deposit"])
     fun depositWallet(
         @PathVariable walletId: Long,
-        @Valid @RequestBody depositRequest: DepositWalletRequest
+        @Valid @RequestBody depositRequest: WalletDepositRequest
     ): ResponseEntity<WalletResponse> =
-        walletDepositUseCase.deposit(walletId, depositRequest).let { ResponseEntity.ok(it.first()) }
+        walletDepositUseCase.deposit(walletId, depositRequest).let { ResponseEntity.ok(it) }
 
 }
 

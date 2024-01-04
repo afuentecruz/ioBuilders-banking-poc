@@ -1,11 +1,19 @@
 package com.iobuilders.bank.poc.application.usecase.wallet
 
-import com.iobuilders.bank.poc.application.rest.request.wallet.DepositWalletRequest
+import com.iobuilders.bank.poc.application.rest.request.wallet.WalletDepositRequest
 import com.iobuilders.bank.poc.application.rest.response.wallet.WalletResponse
 import com.iobuilders.bank.poc.application.rest.response.wallet.toResponse
+import com.iobuilders.bank.poc.domain.service.MovementService
 import com.iobuilders.bank.poc.domain.service.WalletService
 
-class WalletDepositUseCase(private val walletService: WalletService) {
-    fun deposit(walletId: Long, depositWalletRequest: DepositWalletRequest): List<WalletResponse> =
-        walletService.depositWallet(walletId).map { WalletResponse.toResponse(it) }
+class WalletDepositUseCase(private val walletService: WalletService, private val movementService: MovementService) {
+    fun deposit(walletId: Long, walletDepositRequest: WalletDepositRequest): WalletResponse {
+        walletService.findWalletCurrency(walletId, walletDepositRequest.currency).apply {
+            movementService.generateDeposit(this, walletDepositRequest.amount).also {
+                walletService.deposit(this, walletDepositRequest.amount).let {
+                    return WalletResponse.toResponse(it)
+                }
+            }
+        }
+    }
 }

@@ -6,5 +6,6 @@ import org.springframework.stereotype.Repository
 @Repository
 interface SpringDataH2WalletRepository : JpaRepository<WalletEntity, Long> {
     fun findAllByUserId(userId: Long): List<WalletEntity>
+    fun findByIdAndCurrency(walletId: Long, currency: String): WalletEntity?
 }
 

@@ -9,8 +9,8 @@ import jakarta.persistence.*
 @Table(name = "`wallet`")
 class WalletEntity(
     public override var id: Long? = null,
-    @Column(name = "`amount`") val amount: Float,
-    @Column(name = "`currency`") val currency: String,
+    @Column(name = "`amount`", nullable = false) val amount: Float,
+    @Column(name = "`currency`", nullable = false) val currency: String,
     @ManyToOne(cascade = [CascadeType.MERGE]) val user: UserEntity
 ) : BaseEntity(id = id) {
     companion object

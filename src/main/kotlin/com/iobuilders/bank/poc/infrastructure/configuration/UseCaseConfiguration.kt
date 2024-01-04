@@ -5,6 +5,7 @@ import com.iobuilders.bank.poc.application.usecase.user.UserRegistryUseCase
 import com.iobuilders.bank.poc.application.usecase.wallet.WalletCreateUseCase
 import com.iobuilders.bank.poc.application.usecase.wallet.WalletDepositUseCase
 import com.iobuilders.bank.poc.application.usecase.wallet.WalletDetailsUseCase
+import com.iobuilders.bank.poc.domain.service.impl.MovementServiceImpl
 import com.iobuilders.bank.poc.domain.service.impl.UserServiceImpl
 import com.iobuilders.bank.poc.domain.service.impl.WalletServiceImpl
 import org.springframework.context.annotation.Bean
@@ -14,20 +15,27 @@ import org.springframework.context.annotation.Configuration
 class UseCaseConfiguration {
 
     @Bean
-    fun createUserUseCase(userService: UserServiceImpl): UserRegistryUseCase = UserRegistryUseCase(userService)
+    fun createUserUseCase(
+        userService: UserServiceImpl
+    ): UserRegistryUseCase = UserRegistryUseCase(userService)
 
     @Bean
-    fun findUserUseCase(userService: UserServiceImpl): UserDetailsUseCase = UserDetailsUseCase(userService)
+    fun findUserUseCase(
+        userService: UserServiceImpl
+    ): UserDetailsUseCase = UserDetailsUseCase(userService)
 
     @Bean
-    fun createWalletUseCase(userService: UserServiceImpl, walletService: WalletServiceImpl): WalletCreateUseCase =
-        WalletCreateUseCase(userService, walletService)
+    fun createWalletUseCase(
+        userService: UserServiceImpl, walletService: WalletServiceImpl
+    ): WalletCreateUseCase = WalletCreateUseCase(userService, walletService)
 
     @Bean
-    fun walletDetailsUseCase(walletService: WalletServiceImpl): WalletDetailsUseCase =
-        WalletDetailsUseCase(walletService)
+    fun walletDetailsUseCase(
+        walletService: WalletServiceImpl
+    ): WalletDetailsUseCase = WalletDetailsUseCase(walletService)
 
     @Bean
-    fun walletDepositUseCase(walletService: WalletServiceImpl): WalletDepositUseCase =
-        WalletDepositUseCase(walletService)
+    fun walletDepositUseCase(
+        walletService: WalletServiceImpl, movementService: MovementServiceImpl
+    ): WalletDepositUseCase = WalletDepositUseCase(walletService, movementService)
 }

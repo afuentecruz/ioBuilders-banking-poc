@@ -25,8 +25,8 @@ class WalletServiceTest {
         // given
         val user: User = User.userTestData()
         val wallet: Wallet =
-            Wallet.walletTestData(id = null, balance = Money(amount = 0F, currency = MoneyCurrency.FIAT))
-        val createdWallet: Wallet = Wallet.walletTestData(balance = Money(amount = 0F, currency = MoneyCurrency.FIAT))
+            Wallet.walletTestData(id = null, balance = Money(amount = 0F, currency = MoneyCurrency.EUR))
+        val createdWallet: Wallet = Wallet.walletTestData(balance = Money(amount = 0F, currency = MoneyCurrency.EUR))
         every { walletRepository.saveWallet(wallet) } returns (createdWallet)
         // when
         val result = walletService.createWallet(user)

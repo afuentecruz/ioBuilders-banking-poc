@@ -21,7 +21,13 @@ open class BaseEntity(
 
     @PrePersist
     protected fun prePersist() {
-        if (createdAt == null) createdAt = LocalDateTime.now()
+        val now: LocalDateTime = LocalDateTime.now()
+        if (createdAt == null) createdAt = now
+        modifiedAt = now
+    }
+
+    @PreUpdate
+    private fun preUpdate() {
         modifiedAt = LocalDateTime.now()
     }
 }
