@@ -23,6 +23,9 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-validation")
+    implementation("io.jsonwebtoken:jjwt:0.9.1")
+    implementation("org.springframework.boot:spring-boot-starter-security")
+
     implementation("jakarta.validation:jakarta.validation-api:3.0.2")
     implementation("com.h2database:h2")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
