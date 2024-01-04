@@ -10,11 +10,11 @@ open class BaseEntity(
         name = "`id`",
         updatable = false,
         insertable = false
-    ) protected open var id: Long?
+    ) protected open var id: Long?,
+    @Column(name = "`created_at`", updatable = false)
+    protected open var createdAt: LocalDateTime? = null
 ) : Serializable {
 
-    @Column(name = "`created_at`", updatable = false)
-    var createdAt: LocalDateTime? = null
 
     @Column(name = "`modified_at`", updatable = true)
     var modifiedAt: LocalDateTime? = null

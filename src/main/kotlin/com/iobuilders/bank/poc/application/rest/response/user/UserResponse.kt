@@ -8,5 +8,5 @@ data class UserResponse(
     companion object
 }
 
-fun UserResponse.Companion.toResponse(user: User) =
+fun UserResponse.Companion.fromDomain(user: User) =
     UserResponse(id = user.id!!, username = user.username)

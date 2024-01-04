@@ -1,3 +1,5 @@
 package com.iobuilders.bank.poc.domain
 
-data class Money(var amount: Float, val currency: MoneyCurrency)
+import java.math.BigDecimal
+
+data class Money(var amount: BigDecimal, val currency: MoneyCurrency)

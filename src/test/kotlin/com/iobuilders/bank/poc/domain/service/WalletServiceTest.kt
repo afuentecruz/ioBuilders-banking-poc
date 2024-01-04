@@ -13,6 +13,7 @@ import io.mockk.every
 import io.mockk.mockk
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
+import java.math.BigDecimal
 
 class WalletServiceTest {
 
@@ -25,8 +26,8 @@ class WalletServiceTest {
         // given
         val user: User = User.userTestData()
         val wallet: Wallet =
-            Wallet.walletTestData(id = null, balance = Money(amount = 0F, currency = MoneyCurrency.EUR))
-        val createdWallet: Wallet = Wallet.walletTestData(balance = Money(amount = 0F, currency = MoneyCurrency.EUR))
+            Wallet.walletTestData(id = null, balance = Money(amount = BigDecimal.ZERO, currency = MoneyCurrency.EUR))
+        val createdWallet: Wallet = Wallet.walletTestData(balance = Money(amount = BigDecimal.ZERO, currency = MoneyCurrency.EUR))
         every { walletRepository.saveWallet(wallet) } returns (createdWallet)
         // when
         val result = walletService.createWallet(user)

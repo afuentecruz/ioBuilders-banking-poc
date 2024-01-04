@@ -2,6 +2,7 @@ package com.iobuilders.bank.poc.application.usecase.wallet
 
 import com.iobuilders.bank.poc.domain.Wallet
 import com.iobuilders.bank.poc.domain.exception.UserWalletNotFoundException
+import com.iobuilders.bank.poc.domain.service.MovementService
 import com.iobuilders.bank.poc.domain.service.WalletService
 import com.iobuilders.bank.poc.utils.walletTestData
 import io.mockk.every
@@ -13,8 +14,9 @@ import org.junit.jupiter.api.Test
 class WalletDetailsUseCaseTest {
 
     private var walletService: WalletService = mockk()
+    private var movementService: MovementService = mockk()
 
-    private val walletDetailsUseCase = WalletDetailsUseCase(walletService)
+    private val walletDetailsUseCase = WalletDetailsUseCase(walletService, movementService)
 
     @Test
     fun whenFindWalletsForUserWithNoWallet_shouldThrowException() {

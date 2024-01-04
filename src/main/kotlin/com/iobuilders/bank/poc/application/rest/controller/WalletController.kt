@@ -1,6 +1,8 @@
 package com.iobuilders.bank.poc.application.rest.controller
 
 import com.iobuilders.bank.poc.application.rest.request.wallet.WalletDepositRequest
+import com.iobuilders.bank.poc.application.rest.response.wallet.WalletBalanceResponse
+import com.iobuilders.bank.poc.application.rest.response.wallet.WalletMovementResponse
 import com.iobuilders.bank.poc.application.rest.response.wallet.WalletResponse
 import com.iobuilders.bank.poc.application.usecase.wallet.WalletCreateUseCase
 import com.iobuilders.bank.poc.application.usecase.wallet.WalletDepositUseCase
@@ -31,6 +33,18 @@ class WalletController(
         @Valid @RequestBody depositRequest: WalletDepositRequest
     ): ResponseEntity<WalletResponse> =
         walletDepositUseCase.deposit(walletId, depositRequest).let { ResponseEntity.ok(it) }
+
+    @GetMapping(path = ["/{walletId}/balance"])
+    fun walletBalance(
+        @PathVariable walletId: Long
+    ): ResponseEntity<WalletBalanceResponse> =
+        walletDetailsUseCase.getWalletBalance(walletId).let { ResponseEntity.ok(it) }
+
+    @GetMapping(path = ["/{walletId}/movements"])
+    fun walletMovements(
+        @PathVariable walletId: Long
+    ): ResponseEntity<List<WalletMovementResponse>> =
+        walletDetailsUseCase.getWalletMovements(walletId).let { ResponseEntity.ok(it) }
 
 }
 
