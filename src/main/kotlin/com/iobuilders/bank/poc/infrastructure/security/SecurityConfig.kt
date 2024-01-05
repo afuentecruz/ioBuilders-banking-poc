@@ -35,13 +35,18 @@ open class SecurityConfig(
         // well you won't be able to do any request
         http.authorizeHttpRequests {
             it.requestMatchers(HttpMethod.POST, "/users/registry", "/login").permitAll()
+            it.requestMatchers("/h2-console/**").permitAll()
+            it.requestMatchers("/swagger-ui/**").permitAll()
+            it.requestMatchers("/v3/api-docs/**").permitAll()
             it.anyRequest().authenticated()
         }.csrf { it.disable() }
             .authenticationManager(authenticationManager)
             .sessionManagement { it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
             .addFilter(JwtAuthenticationFilter(jwtToken, authenticationManager))
             .addFilter(JwtAuthorizationFilter(jwtToken, userDetailsService, authenticationManager))
-
+        http.headers {
+            it.frameOptions { it.disable() }
+        }
         return http.build()
     }
 
