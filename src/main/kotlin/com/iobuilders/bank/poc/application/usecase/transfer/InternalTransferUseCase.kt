@@ -1,52 +1,54 @@
 package com.iobuilders.bank.poc.application.usecase.transfer
 
-import com.iobuilders.bank.poc.application.rest.request.transfer.InternalTransferRequest
+import com.iobuilders.bank.poc.application.rest.request.transfer.TransferRequest
+import com.iobuilders.bank.poc.application.usecase.movement.DepositMovementUseCase
+import com.iobuilders.bank.poc.application.usecase.movement.WithdrawMovementUseCase
 import com.iobuilders.bank.poc.domain.Money
 import com.iobuilders.bank.poc.domain.MoneyCurrency
-import com.iobuilders.bank.poc.domain.MovementType
+import com.iobuilders.bank.poc.domain.TransferStatus
 import com.iobuilders.bank.poc.domain.Wallet
 import com.iobuilders.bank.poc.domain.service.AmlValidationService
-import com.iobuilders.bank.poc.domain.service.MovementService
 import com.iobuilders.bank.poc.domain.service.TransferService
 import com.iobuilders.bank.poc.domain.service.WalletService
 
 class InternalTransferUseCase(
+    private val withdrawMovementUseCase: WithdrawMovementUseCase,
+    private val depositMovementUseCase: DepositMovementUseCase,
     private val walletService: WalletService,
-    private val movementService: MovementService,
     private val transferService: TransferService,
     private val amlValidationService: AmlValidationService
 ) {
 
-    fun internalTransfer(username: String, internalTransferRequest: InternalTransferRequest) {
-        var originWallet: Wallet =
-            walletService.findWalletCurrency(internalTransferRequest.from, internalTransferRequest.currency)
-        var destinationWallet: Wallet =
-            walletService.findWalletCurrency(internalTransferRequest.to, internalTransferRequest.currency)
+    fun internalTransfer(username: String, transferRequest: TransferRequest) {
+        val originWallet: Wallet =
+            walletService.findWalletCurrency(transferRequest.from, transferRequest.currency)
+        val destinationWallet: Wallet =
+            walletService.findWalletCurrency(transferRequest.to, transferRequest.currency)
 
-        validate(username, originWallet, destinationWallet, internalTransferRequest)
+        validateInternalTransfer(username, originWallet, destinationWallet, transferRequest)
 
-        val transferMoney = Money(
-            amount = internalTransferRequest.amount, currency = MoneyCurrency.valueOf(internalTransferRequest.currency)
-        )
-
-        movementService.doMovement(originWallet, transferMoney, MovementType.WITHDRAW).also {
-            originWallet = walletService.withdraw(originWallet, transferMoney.amount)
+        buildTransferMoney(transferRequest).let { transferMoney ->
+            transferService.doTransfer(originWallet, destinationWallet, transferMoney).let { transfer ->
+                if (TransferStatus.COMPLETED == transfer.status) {
+                    withdrawMovementUseCase.withdrawMovement(originWallet, transferMoney)
+                    depositMovementUseCase.depositMovement(destinationWallet, transferMoney)
+                }
+            }
         }
-        movementService.doMovement(destinationWallet, transferMoney, MovementType.DEPOSIT).also {
-            destinationWallet = walletService.deposit(destinationWallet, transferMoney.amount)
-        }
-
-        transferService.doTransfer(originWallet, destinationWallet, transferMoney)
     }
 
-    private fun validate(
+    private fun buildTransferMoney(transferRequest: TransferRequest) = Money(
+        amount = transferRequest.amount, currency = MoneyCurrency.valueOf(transferRequest.currency)
+    )
+
+    private fun validateInternalTransfer(
         username: String,
         originWallet: Wallet,
         destinationWallet: Wallet,
-        internalTransferRequest: InternalTransferRequest
+        transferRequest: TransferRequest
     ) {
         amlValidationService.checkWalletOwnership(username, originWallet.id!!)
-        amlValidationService.checkWalletBalance(originWallet, internalTransferRequest.amount)
+        amlValidationService.checkWalletBalance(originWallet, transferRequest.amount)
         amlValidationService.checkWalletsAreNotTheSame(originWallet, destinationWallet)
     }
 }

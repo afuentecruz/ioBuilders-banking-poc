@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotNull
 import java.math.BigDecimal
 
-data class InternalTransferRequest(
+data class TransferRequest(
     @field:NotNull(message = "amount is mandatory")
     @field:Min(1)
     val amount: BigDecimal,

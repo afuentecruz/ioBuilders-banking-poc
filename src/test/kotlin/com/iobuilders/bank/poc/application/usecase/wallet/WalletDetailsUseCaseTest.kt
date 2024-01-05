@@ -1,14 +1,12 @@
 package com.iobuilders.bank.poc.application.usecase.wallet
 
 import com.iobuilders.bank.poc.application.rest.response.wallet.WalletBalanceResponse
-import com.iobuilders.bank.poc.domain.Movement
 import com.iobuilders.bank.poc.domain.User
 import com.iobuilders.bank.poc.domain.Wallet
 import com.iobuilders.bank.poc.domain.exception.ForbiddenWalletUsageException
 import com.iobuilders.bank.poc.domain.exception.UserWalletNotFoundException
 import com.iobuilders.bank.poc.domain.exception.WalletNotFoundException
 import com.iobuilders.bank.poc.domain.service.AmlValidationService
-import com.iobuilders.bank.poc.domain.service.MovementService
 import com.iobuilders.bank.poc.domain.service.UserService
 import com.iobuilders.bank.poc.domain.service.WalletService
 import com.iobuilders.bank.poc.utils.testData
@@ -21,12 +19,11 @@ import org.junit.jupiter.api.Test
 class WalletDetailsUseCaseTest {
 
     private var walletService: WalletService = mockk()
-    private var movementService: MovementService = mockk()
     private var userService: UserService = mockk()
     private var amlValidationService: AmlValidationService = mockk()
 
     private val walletDetailsUseCase =
-        WalletDetailsUseCase(walletService, movementService, userService, amlValidationService)
+        WalletDetailsUseCase(walletService, userService, amlValidationService)
 
     @Test
     fun whenFindWalletsForUserWithNoWallet_shouldThrowException() {
@@ -119,39 +116,39 @@ class WalletDetailsUseCaseTest {
         verify(exactly = 1) { amlValidationService.checkWalletOwnership(user.username, wallet.id!!) }
         verify(exactly = 1) { walletService.findWallet(wallet.id!!) }
     }
+    /*
+        @Test
+        fun getWalletMovementsFromANonUserWallet_shouldThrowForbiddenWalletUsageException() {
 
-    @Test
-    fun getWalletMovementsFromANonUserWallet_shouldThrowForbiddenWalletUsageException() {
-
-        // given
-        val username: String = "username"
-        val walletId: Long = 1L
-        every {
-            amlValidationService.checkWalletOwnership(username, walletId)
-        } throws ForbiddenWalletUsageException()
-        // when
-        val result = Assertions.assertThrows(ForbiddenWalletUsageException::class.java) {
-            walletDetailsUseCase.getWalletMovements(username, walletId)
+            // given
+            val username: String = "username"
+            val walletId: Long = 1L
+            every {
+                amlValidationService.checkWalletOwnership(username, walletId)
+            } throws ForbiddenWalletUsageException()
+            // when
+            val result = Assertions.assertThrows(ForbiddenWalletUsageException::class.java) {
+                walletDetailsUseCase.getWalletMovements(username, walletId)
+            }
+            // then
+            Assertions.assertEquals("You are not allowed to use this wallet", result.message)
+            verify(exactly = 1) { amlValidationService.checkWalletOwnership(username, walletId) }
         }
-        // then
-        Assertions.assertEquals("You are not allowed to use this wallet", result.message)
-        verify(exactly = 1) { amlValidationService.checkWalletOwnership(username, walletId) }
-    }
 
-    @Test
-    fun getWalletMovementsFromAUserWallet_shouldReturnTheMovementsList() {
+          @Test
+          fun getWalletMovementsFromAUserWallet_shouldReturnTheMovementsList() {
 
-        // given
-        val user: User = User.testData()
-        val wallet: Wallet = Wallet.testData()
-        val movements: List<Movement> = listOf(Movement.testData())
+                // given
+                val user: User = User.testData()
+                val wallet: Wallet = Wallet.testData()
+                val movements: List<Movement> = listOf(Movement.testData())
 
-        every { amlValidationService.checkWalletOwnership(user.username, wallet.id!!) } returns Unit
-        every { movementService.findWalletMovements(wallet.id!!) } returns movements
-        // when
-        val result = walletDetailsUseCase.getWalletMovements(user.username, wallet.id!!)
-        // then
-        verify(exactly = 1) { movementService.findWalletMovements(wallet.id!!) }
-        verify(exactly = 1) { amlValidationService.checkWalletOwnership(user.username, wallet.id!!) }
-    }
+                every { amlValidationService.checkWalletOwnership(user.username, wallet.id!!) } returns Unit
+                every { movementService.findWalletMovements(wallet.id!!) } returns movements
+                // when
+                val result = walletDetailsUseCase.getWalletMovements(user.username, wallet.id!!)
+                // then
+                verify(exactly = 1) { movementService.findWalletMovements(wallet.id!!) }
+                verify(exactly = 1) { amlValidationService.checkWalletOwnership(user.username, wallet.id!!) }
+            }*/
 }

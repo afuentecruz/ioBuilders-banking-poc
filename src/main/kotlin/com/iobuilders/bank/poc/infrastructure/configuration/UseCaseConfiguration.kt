@@ -1,5 +1,7 @@
 package com.iobuilders.bank.poc.infrastructure.configuration
 
+import com.iobuilders.bank.poc.application.usecase.movement.DepositMovementUseCase
+import com.iobuilders.bank.poc.application.usecase.movement.WithdrawMovementUseCase
 import com.iobuilders.bank.poc.application.usecase.transfer.InternalTransferUseCase
 import com.iobuilders.bank.poc.application.usecase.user.UserDetailsUseCase
 import com.iobuilders.bank.poc.application.usecase.user.UserRegistryUseCase
@@ -33,10 +35,9 @@ class UseCaseConfiguration {
     @Bean
     fun walletDetailsUseCase(
         walletService: WalletService,
-        movementService: MovementService,
         userService: UserService,
         amlValidationService: AmlValidationService
-    ): WalletDetailsUseCase = WalletDetailsUseCase(walletService, movementService, userService, amlValidationService)
+    ): WalletDetailsUseCase = WalletDetailsUseCase(walletService, userService, amlValidationService)
 
     @Bean
     fun walletDepositUseCase(
@@ -45,10 +46,18 @@ class UseCaseConfiguration {
 
     @Bean
     fun internalTransferUSeCase(
+        withdrawMovementUseCase: WithdrawMovementUseCase,
+        depositMovementUseCase: DepositMovementUseCase,
         walletService: WalletService,
         movementService: MovementService,
         transferService: TransferService,
         amlValidationService: AmlValidationService
     ): InternalTransferUseCase =
-        InternalTransferUseCase(walletService, movementService, transferService, amlValidationService)
+        InternalTransferUseCase(
+            withdrawMovementUseCase,
+            depositMovementUseCase,
+            walletService,
+            transferService,
+            amlValidationService
+        )
 }

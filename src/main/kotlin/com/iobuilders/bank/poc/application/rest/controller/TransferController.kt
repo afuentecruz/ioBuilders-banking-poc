@@ -1,6 +1,6 @@
 package com.iobuilders.bank.poc.application.rest.controller
 
-import com.iobuilders.bank.poc.application.rest.request.transfer.InternalTransferRequest
+import com.iobuilders.bank.poc.application.rest.request.transfer.TransferRequest
 import com.iobuilders.bank.poc.application.usecase.transfer.InternalTransferUseCase
 import jakarta.validation.Valid
 import org.springframework.http.ResponseEntity
@@ -17,8 +17,8 @@ class TransferController(private val internalTransferUseCase: InternalTransferUs
     @PostMapping(value = ["/internal"])
     fun internalTransfer(
         principal: Principal,
-        @Valid @RequestBody internalTransferRequest: InternalTransferRequest
+        @Valid @RequestBody transferRequest: TransferRequest
     ): ResponseEntity<Unit> =
-        internalTransferUseCase.internalTransfer(principal.name, internalTransferRequest)
+        internalTransferUseCase.internalTransfer(principal.name, transferRequest)
             .let { ResponseEntity.ok().build() }
 }

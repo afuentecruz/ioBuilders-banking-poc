@@ -1,13 +1,14 @@
 package com.iobuilders.bank.poc.application.usecase.transfer
 
-import com.iobuilders.bank.poc.application.rest.request.transfer.InternalTransferRequest
+import com.iobuilders.bank.poc.application.rest.request.transfer.TransferRequest
+import com.iobuilders.bank.poc.application.usecase.movement.DepositMovementUseCase
+import com.iobuilders.bank.poc.application.usecase.movement.WithdrawMovementUseCase
 import com.iobuilders.bank.poc.domain.*
 import com.iobuilders.bank.poc.domain.exception.ForbiddenWalletUsageException
 import com.iobuilders.bank.poc.domain.exception.InsufficientFundsException
 import com.iobuilders.bank.poc.domain.exception.SameWalletsException
 import com.iobuilders.bank.poc.domain.exception.WalletCurrencyNotFoundException
 import com.iobuilders.bank.poc.domain.service.AmlValidationService
-import com.iobuilders.bank.poc.domain.service.MovementService
 import com.iobuilders.bank.poc.domain.service.TransferService
 import com.iobuilders.bank.poc.domain.service.WalletService
 import com.iobuilders.bank.poc.utils.testData
@@ -20,13 +21,14 @@ import java.math.BigDecimal
 
 class InternalTransferUseCaseTest {
 
+    private val withdrawMovementUseCase: WithdrawMovementUseCase = mockk()
+    private val depositMovementUseCase: DepositMovementUseCase = mockk()
     private var walletService: WalletService = mockk()
-    private var movementService: MovementService = mockk()
     private var transferService: TransferService = mockk()
     private var amlValidationService: AmlValidationService = mockk()
 
     private val internalTransferUseCase: InternalTransferUseCase = InternalTransferUseCase(
-        walletService, movementService, transferService, amlValidationService
+        withdrawMovementUseCase, depositMovementUseCase, walletService, transferService, amlValidationService
     )
 
     @Test
@@ -35,7 +37,7 @@ class InternalTransferUseCaseTest {
         val originWalletId = 1L
         val currency: String = MoneyCurrency.EUR.name
         val user: User = User.testData()
-        val internalTransferRequest = InternalTransferRequest(
+        val transferRequest = TransferRequest(
             amount = BigDecimal.TEN, currency = MoneyCurrency.EUR.name, from = 1L, to = 2L
         )
         every { walletService.findWalletCurrency(originWalletId, currency) } throws WalletCurrencyNotFoundException(
@@ -44,7 +46,7 @@ class InternalTransferUseCaseTest {
 
         // when
         val result = Assertions.assertThrows(WalletCurrencyNotFoundException::class.java) {
-            internalTransferUseCase.internalTransfer(user.username, internalTransferRequest)
+            internalTransferUseCase.internalTransfer(user.username, transferRequest)
         }
 
         // then
@@ -61,7 +63,7 @@ class InternalTransferUseCaseTest {
 
         val currency: String = MoneyCurrency.EUR.name
         val user: User = User.testData()
-        val internalTransferRequest = InternalTransferRequest(
+        val transferRequest = TransferRequest(
             amount = BigDecimal.TEN, currency = MoneyCurrency.EUR.name, from = 1L, to = 2L
         )
         every { walletService.findWalletCurrency(originWallet.id!!, currency) } returns originWallet
@@ -73,7 +75,7 @@ class InternalTransferUseCaseTest {
 
         // when
         val result = Assertions.assertThrows(WalletCurrencyNotFoundException::class.java) {
-            internalTransferUseCase.internalTransfer(user.username, internalTransferRequest)
+            internalTransferUseCase.internalTransfer(user.username, transferRequest)
         }
 
         // then
@@ -93,7 +95,7 @@ class InternalTransferUseCaseTest {
         val destination = Wallet.testData(id = 2L)
 
         val currency: String = MoneyCurrency.EUR.name
-        val internalTransferRequest = InternalTransferRequest(
+        val transferRequest = TransferRequest(
             amount = BigDecimal.TEN, currency = MoneyCurrency.EUR.name, from = 1L, to = 2L
         )
         every { walletService.findWalletCurrency(origin.id!!, currency) } returns origin
@@ -108,7 +110,7 @@ class InternalTransferUseCaseTest {
 
         // when
         val result = Assertions.assertThrows(ForbiddenWalletUsageException::class.java) {
-            internalTransferUseCase.internalTransfer(user.username, internalTransferRequest)
+            internalTransferUseCase.internalTransfer(user.username, transferRequest)
         }
 
         // then
@@ -128,7 +130,7 @@ class InternalTransferUseCaseTest {
         val destination = Wallet.testData(id = 2L)
 
         val currency: String = MoneyCurrency.EUR.name
-        val internalTransferRequest = InternalTransferRequest(
+        val transferRequest = TransferRequest(
             amount = BigDecimal.TEN, currency = MoneyCurrency.EUR.name, from = 1L, to = 2L
         )
         every { walletService.findWalletCurrency(origin.id!!, currency) } returns origin
@@ -141,12 +143,12 @@ class InternalTransferUseCaseTest {
             amlValidationService.checkWalletOwnership(user.username, origin.id!!)
         } returns Unit
         every {
-            amlValidationService.checkWalletBalance(origin, internalTransferRequest.amount)
+            amlValidationService.checkWalletBalance(origin, transferRequest.amount)
         } throws InsufficientFundsException()
 
         // when
         val result = Assertions.assertThrows(InsufficientFundsException::class.java) {
-            internalTransferUseCase.internalTransfer(user.username, internalTransferRequest)
+            internalTransferUseCase.internalTransfer(user.username, transferRequest)
         }
 
         // then
@@ -156,7 +158,7 @@ class InternalTransferUseCaseTest {
         verify { walletService.findWalletCurrency(origin.id!!, currency) }
         verify { walletService.findWalletCurrency(destination.id!!, currency) }
         verify { amlValidationService.checkWalletOwnership(user.username, origin.id!!) }
-        verify { amlValidationService.checkWalletBalance(origin, internalTransferRequest.amount) }
+        verify { amlValidationService.checkWalletBalance(origin, transferRequest.amount) }
     }
 
     @Test
@@ -167,7 +169,7 @@ class InternalTransferUseCaseTest {
         val destination = Wallet.testData(id = 2L)
 
         val currency: String = MoneyCurrency.EUR.name
-        val internalTransferRequest = InternalTransferRequest(
+        val transferRequest = TransferRequest(
             amount = BigDecimal.TEN, currency = MoneyCurrency.EUR.name, from = 1L, to = 2L
         )
         every { walletService.findWalletCurrency(origin.id!!, currency) } returns origin
@@ -180,7 +182,7 @@ class InternalTransferUseCaseTest {
             amlValidationService.checkWalletOwnership(user.username, origin.id!!)
         } returns Unit
         every {
-            amlValidationService.checkWalletBalance(origin, internalTransferRequest.amount)
+            amlValidationService.checkWalletBalance(origin, transferRequest.amount)
         } returns Unit
         every {
             amlValidationService.checkWalletsAreNotTheSame(origin, destination)
@@ -188,7 +190,7 @@ class InternalTransferUseCaseTest {
 
         // when
         val result = Assertions.assertThrows(SameWalletsException::class.java) {
-            internalTransferUseCase.internalTransfer(user.username, internalTransferRequest)
+            internalTransferUseCase.internalTransfer(user.username, transferRequest)
         }
 
         // then
@@ -198,35 +200,26 @@ class InternalTransferUseCaseTest {
         verify { walletService.findWalletCurrency(origin.id!!, currency) }
         verify { walletService.findWalletCurrency(destination.id!!, currency) }
         verify { amlValidationService.checkWalletOwnership(user.username, origin.id!!) }
-        verify { amlValidationService.checkWalletBalance(origin, internalTransferRequest.amount) }
+        verify { amlValidationService.checkWalletBalance(origin, transferRequest.amount) }
         verify { amlValidationService.checkWalletsAreNotTheSame(origin, destination) }
     }
 
-
     @Test
-    fun internalTransferBetween_shouldGenerateWithdrawMovementInOriginAndDepositInDestination_thenCallWalletDepositAndWithdraw_thenCallDoTransfer() {
+    fun internalTransferGenerateACompletedTransfer_shouldCallWithdrawAndDepositUseCase() {
         // given
-        val internalTransferRequest = InternalTransferRequest(
+        val transferRequest = TransferRequest(
             amount = BigDecimal.TEN, currency = MoneyCurrency.EUR.name, from = 1L, to = 2L
         )
         val user = User.testData()
         val origin = Wallet.testData(id = 1L, balance = Money(BigDecimal.TEN, currency = MoneyCurrency.EUR))
-        val originWithdraw = origin.copy(
-            balance = Money(
-                origin.balance.amount.minus(internalTransferRequest.amount), currency = origin.balance.currency
-            )
-        )
         val destination = Wallet.testData(id = 2L)
-        val destinationDeposit = destination.copy(
-            balance = Money(
-                destination.balance.amount.plus(internalTransferRequest.amount), currency = origin.balance.currency
-            )
-        )
-
         val currency: String = MoneyCurrency.EUR.name
-
-        val transferMoney = Money(
-            amount = internalTransferRequest.amount, currency = MoneyCurrency.valueOf(internalTransferRequest.currency)
+        val transferMoney =
+            Money(amount = transferRequest.amount, currency = MoneyCurrency.valueOf(transferRequest.currency))
+        val completedTransfer = Transfer.testData(
+            origin = origin,
+            destination = destination,
+            status = TransferStatus.COMPLETED
         )
 
         every { walletService.findWalletCurrency(origin.id!!, currency) } returns origin
@@ -239,43 +232,87 @@ class InternalTransferUseCaseTest {
             amlValidationService.checkWalletOwnership(user.username, origin.id!!)
         } returns Unit
         every {
-            amlValidationService.checkWalletBalance(origin, internalTransferRequest.amount)
+            amlValidationService.checkWalletBalance(origin, transferRequest.amount)
         } returns Unit
         every {
             amlValidationService.checkWalletsAreNotTheSame(origin, destination)
         } returns Unit
         every {
-            movementService.doMovement(origin, transferMoney, MovementType.WITHDRAW)
+            transferService.doTransfer(origin, destination, transferMoney)
+        } returns completedTransfer
+        every {
+            withdrawMovementUseCase.withdrawMovement(origin, transferMoney)
         } returns Movement.testData()
         every {
-            movementService.doMovement(destination, transferMoney, MovementType.DEPOSIT)
+            depositMovementUseCase.depositMovement(destination, transferMoney)
         } returns Movement.testData()
-        every {
-            walletService.withdraw(origin, transferMoney.amount)
-        } returns originWithdraw
-
-        every {
-            walletService.deposit(destination, transferMoney.amount)
-        } returns destinationDeposit
-        every {
-            transferService.doTransfer(originWithdraw, destinationDeposit, transferMoney)
-        } returns Transfer.testData()
         // when
-        val result = internalTransferUseCase.internalTransfer(user.username, internalTransferRequest)
+        val result = internalTransferUseCase.internalTransfer(user.username, transferRequest)
 
         // then
         verify { walletService.findWalletCurrency(origin.id!!, currency) }
         verify { walletService.findWalletCurrency(destination.id!!, currency) }
         verify { amlValidationService.checkWalletOwnership(user.username, origin.id!!) }
-        verify { amlValidationService.checkWalletBalance(origin, internalTransferRequest.amount) }
+        verify { amlValidationService.checkWalletBalance(origin, transferRequest.amount) }
         verify { amlValidationService.checkWalletsAreNotTheSame(origin, destination) }
-        verify { movementService.doMovement(origin, transferMoney, MovementType.WITHDRAW) }
-        verify { walletService.withdraw(origin, transferMoney.amount) }
-        verify { movementService.doMovement(destination, transferMoney, MovementType.DEPOSIT) }
-        verify { walletService.deposit(destination, transferMoney.amount) }
         verify {
-            transferService.doTransfer(originWithdraw, destinationDeposit, transferMoney)
+            transferService.doTransfer(origin, destination, transferMoney)
         }
+        verify { withdrawMovementUseCase.withdrawMovement(origin, transferMoney) }
+        verify { depositMovementUseCase.depositMovement(destination, transferMoney) }
+    }
+
+    @Test
+    fun internalTransferGenerateAnErrorTransfer_shouldCallWithdrawAndDepositUseCase() {
+        // given
+        val transferRequest = TransferRequest(
+            amount = BigDecimal.TEN, currency = MoneyCurrency.EUR.name, from = 1L, to = 2L
+        )
+        val user = User.testData()
+        val origin = Wallet.testData(id = 1L, balance = Money(BigDecimal.TEN, currency = MoneyCurrency.EUR))
+        val destination = Wallet.testData(id = 2L)
+        val currency: String = MoneyCurrency.EUR.name
+        val transferMoney =
+            Money(amount = transferRequest.amount, currency = MoneyCurrency.valueOf(transferRequest.currency))
+        val errorTransfer = Transfer.testData(
+            origin = origin,
+            destination = destination,
+            status = TransferStatus.ERROR
+        )
+
+        every { walletService.findWalletCurrency(origin.id!!, currency) } returns origin
+        every {
+            walletService.findWalletCurrency(
+                destination.id!!, currency
+            )
+        } returns destination
+        every {
+            amlValidationService.checkWalletOwnership(user.username, origin.id!!)
+        } returns Unit
+        every {
+            amlValidationService.checkWalletBalance(origin, transferRequest.amount)
+        } returns Unit
+        every {
+            amlValidationService.checkWalletsAreNotTheSame(origin, destination)
+        } returns Unit
+        every {
+            transferService.doTransfer(origin, destination, transferMoney)
+        } returns errorTransfer
+
+        // when
+        val result = internalTransferUseCase.internalTransfer(user.username, transferRequest)
+
+        // then
+        verify { walletService.findWalletCurrency(origin.id!!, currency) }
+        verify { walletService.findWalletCurrency(destination.id!!, currency) }
+        verify { amlValidationService.checkWalletOwnership(user.username, origin.id!!) }
+        verify { amlValidationService.checkWalletBalance(origin, transferRequest.amount) }
+        verify { amlValidationService.checkWalletsAreNotTheSame(origin, destination) }
+        verify {
+            transferService.doTransfer(origin, destination, transferMoney)
+        }
+        verify(exactly = 0) { withdrawMovementUseCase.withdrawMovement(origin, transferMoney) }
+        verify(exactly = 0) { depositMovementUseCase.depositMovement(destination, transferMoney) }
     }
 
 
