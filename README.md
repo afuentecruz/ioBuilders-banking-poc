@@ -1,7 +1,10 @@
 # ioBuildersBankPoC
-
-ioBuilders tech PoC
-
+This repo provides an implementation for the banking PoC tech test given by ioBuilders
+### Stack 
+- Kotlin 1.9.2
+- SpringBoot 3.2.1
+- H2 2.2.2
+- OpenApi 2.3.0 
 ## Api Docs
 
 http://localhost:8080/swagger-ui/index.html
