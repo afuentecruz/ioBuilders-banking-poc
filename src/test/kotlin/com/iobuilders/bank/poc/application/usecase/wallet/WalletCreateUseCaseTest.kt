@@ -30,7 +30,7 @@ class WalletCreateUseCaseTest {
         every { userService.findUser(userId) } returns (user)
         every { walletService.createWallet(user) } returns (wallet)
         // when
-        val result = walletCreateUseCase.createUserWallet(userId)
+        val result = walletCreateUseCase.createUserWallet(user.username)
         // then
         Assertions.assertEquals(wallet.balance.amount, result.balance)
         Assertions.assertEquals(wallet.balance.currency.name, result.currency)
@@ -41,10 +41,11 @@ class WalletCreateUseCaseTest {
     fun whenCreateWalletForNonExistingUser_shouldThrowException() {
         // given
         val userId: Long = 1L
+        val username: String = "usernameTest"
         every { userService.findUser(userId) } throws (UserNotFoundException(userId))
         // when
         val result =
-            Assertions.assertThrows(UserNotFoundException::class.java) { walletCreateUseCase.createUserWallet(userId) }
+            Assertions.assertThrows(UserNotFoundException::class.java) { walletCreateUseCase.createUserWallet(username) }
         // then
         Assertions.assertEquals("User with id $userId not found", result.message)
         verify(exactly = 1) { userService.findUser(userId) }

@@ -15,7 +15,7 @@ class MovementServiceImpl(
         Movement(type = type, money = money, wallet = wallet)
             .let { movementRepository.save(it) }
 
-    override fun findMovementsFromWallet(walletId: Long): List<Movement> =
+    override fun findWalletMovements(walletId: Long): List<Movement> =
         movementRepository.findAllWalletMovements(walletId)
 
 }

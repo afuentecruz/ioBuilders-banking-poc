@@ -6,9 +6,7 @@ import jakarta.validation.constraints.NotNull
 import java.math.BigDecimal
 
 data class InternalTransferRequest(
-    @field:NotNull(message = "ordered by is mandatory")
-    val orderedBy: Long,
-    @field:NotNull(message = "coco")
+    @field:NotNull(message = "amount is mandatory")
     @field:Min(1)
     val amount: BigDecimal,
     @field:NotBlank(message = "currency cannot be empty")

@@ -8,12 +8,17 @@ import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
+import java.security.Principal
 
 @Controller
 @RequestMapping("/transfers")
 class TransferController(private val internalTransferUseCase: InternalTransferUseCase) {
 
     @PostMapping(value = ["/internal"])
-    fun internalTransfer(@Valid @RequestBody internalTransferRequest: InternalTransferRequest): ResponseEntity<Unit> =
-        internalTransferUseCase.internalTransfer(internalTransferRequest).let { ResponseEntity.ok().build() }
+    fun internalTransfer(
+        principal: Principal,
+        @Valid @RequestBody internalTransferRequest: InternalTransferRequest
+    ): ResponseEntity<Unit> =
+        internalTransferUseCase.internalTransfer(principal.name, internalTransferRequest)
+            .let { ResponseEntity.ok().build() }
 }

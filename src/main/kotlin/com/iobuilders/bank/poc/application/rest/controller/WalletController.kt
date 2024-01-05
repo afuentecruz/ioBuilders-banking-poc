@@ -10,6 +10,7 @@ import com.iobuilders.bank.poc.application.usecase.wallet.WalletDetailsUseCase
 import jakarta.validation.Valid
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
+import java.security.Principal
 
 @RestController
 @RequestMapping("/wallets")
@@ -19,13 +20,13 @@ class WalletController(
     private val walletDepositUseCase: WalletDepositUseCase
 ) {
 
-    @PostMapping(path = ["/{userId}/create"])
-    fun createWallet(@PathVariable userId: Long): ResponseEntity<WalletResponse> =
-        createWalletUseCase.createUserWallet(userId).let { ResponseEntity.ok(it) }
+    @PostMapping(path = ["/create"])
+    fun createWallet(principal: Principal): ResponseEntity<WalletResponse> =
+        createWalletUseCase.createUserWallet(principal.name).let { ResponseEntity.ok(it) }
 
-    @GetMapping(path = ["/{userId}"])
-    fun getUserWallets(@PathVariable userId: Long): ResponseEntity<List<WalletResponse>> =
-        walletDetailsUseCase.getUserWallets(userId).let { ResponseEntity.ok(it) }
+    @GetMapping()
+    fun getUserWallets(principal: Principal): ResponseEntity<List<WalletResponse>> =
+        walletDetailsUseCase.getUserWallets(principal.name).let { ResponseEntity.ok(it) }
 
     @PostMapping(path = ["/{walletId}/deposit"])
     fun depositWallet(
@@ -36,15 +37,17 @@ class WalletController(
 
     @GetMapping(path = ["/{walletId}/balance"])
     fun walletBalance(
+        principal: Principal,
         @PathVariable walletId: Long
     ): ResponseEntity<WalletBalanceResponse> =
-        walletDetailsUseCase.getWalletBalance(walletId).let { ResponseEntity.ok(it) }
+        walletDetailsUseCase.getWalletBalance(principal.name, walletId).let { ResponseEntity.ok(it) }
 
     @GetMapping(path = ["/{walletId}/movements"])
     fun walletMovements(
+        principal: Principal,
         @PathVariable walletId: Long
     ): ResponseEntity<List<WalletMovementResponse>> =
-        walletDetailsUseCase.getWalletMovements(walletId).let { ResponseEntity.ok(it) }
+        walletDetailsUseCase.getWalletMovements(principal.name, walletId).let { ResponseEntity.ok(it) }
 
 }
 
