@@ -17,9 +17,7 @@ class UserController(val registerUserUseCase: UserRegistryUseCase, val findUserU
 
     @GetMapping(path = ["/users"])
     fun findAllUsers(principal: Principal): ResponseEntity<List<UserResponse>> = run {
-        println("yoooooooooooo " + principal.name)
         findUserUseCase.findAllUsers().let { ResponseEntity.ok(it) }
-
     }
 
     @PostMapping(path = ["/users/registry"])

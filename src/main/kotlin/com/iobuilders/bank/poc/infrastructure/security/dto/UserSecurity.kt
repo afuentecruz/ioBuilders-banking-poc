@@ -1,4 +1,4 @@
-package com.iobuilders.bank.poc.infrastructure.security
+package com.iobuilders.bank.poc.infrastructure.security.dto
 
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails

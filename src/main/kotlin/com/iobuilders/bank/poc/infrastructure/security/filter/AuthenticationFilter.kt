@@ -1,6 +1,9 @@
-package com.iobuilders.bank.poc.infrastructure.security
+package com.iobuilders.bank.poc.infrastructure.security.filter
+
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.iobuilders.bank.poc.application.rest.request.user.LoginRequest
+import com.iobuilders.bank.poc.infrastructure.security.dto.UserSecurity
+import com.iobuilders.bank.poc.infrastructure.security.service.TokenService
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
@@ -14,27 +17,22 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import java.util.*
 
 class JwtAuthenticationFilter(
-    private val jwtTokenUtil: JwtTokenUtil,
-    private val authenticationManager: AuthenticationManager
-) :
-    UsernamePasswordAuthenticationFilter() {
+    private val tokenService: TokenService, private val authenticationManager: AuthenticationManager
+) : UsernamePasswordAuthenticationFilter() {
 
     override fun attemptAuthentication(req: HttpServletRequest, response: HttpServletResponse): Authentication {
         val credentials = ObjectMapper().readValue(req.inputStream, LoginRequest::class.java)
         val auth = UsernamePasswordAuthenticationToken(
-            credentials.username,
-            credentials.password,
-            Collections.singleton(SimpleGrantedAuthority("user"))
+            credentials.username, credentials.password, Collections.singleton(SimpleGrantedAuthority("user"))
         )
         return authenticationManager.authenticate(auth)
     }
 
     override fun successfulAuthentication(
-        req: HttpServletRequest?, res: HttpServletResponse, chain: FilterChain?,
-        auth: Authentication
+        req: HttpServletRequest?, res: HttpServletResponse, chain: FilterChain?, auth: Authentication
     ) {
         val username = (auth.principal as UserSecurity).username
-        val token: String = jwtTokenUtil.generateToken(username)
+        val token: String = tokenService.generateToken(username)
         res.addHeader("Authorization", token)
         res.addHeader("Access-Control-Expose-Headers", "Authorization")
         res.addHeader(HttpHeaders.CONTENT_TYPE, "Application/json")
@@ -42,9 +40,7 @@ class JwtAuthenticationFilter(
     }
 
     override fun unsuccessfulAuthentication(
-        request: HttpServletRequest,
-        response: HttpServletResponse,
-        failed: AuthenticationException
+        request: HttpServletRequest, response: HttpServletResponse, failed: AuthenticationException
     ) {
         val error = BadCredentialsError()
         response.status = error.status

@@ -1,5 +1,9 @@
 package com.iobuilders.bank.poc.infrastructure.security
 
+import com.iobuilders.bank.poc.infrastructure.security.filter.JwtAuthenticationFilter
+import com.iobuilders.bank.poc.infrastructure.security.filter.JwtAuthorizationFilter
+import com.iobuilders.bank.poc.infrastructure.security.service.TokenService
+import com.iobuilders.bank.poc.infrastructure.security.service.UserDetailsService
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpMethod
@@ -14,7 +18,7 @@ import org.springframework.security.web.SecurityFilterChain
 open class SecurityConfig(
     private val userDetailsService: UserDetailsService,
 ) {
-    private val jwtToken = JwtTokenUtil()
+    private val jwtToken = TokenService()
 
     private fun authManager(http: HttpSecurity): AuthenticationManager {
         val authenticationManagerBuilder = http.getSharedObject(
@@ -25,7 +29,7 @@ open class SecurityConfig(
     }
 
     @Bean
-    open fun filterChain(http: HttpSecurity): SecurityFilterChain {
+    fun filterChain(http: HttpSecurity): SecurityFilterChain {
         val authenticationManager = authManager(http)
         // Put your endpoint to create/sign, otherwise spring will secure it as
         // well you won't be able to do any request
@@ -42,7 +46,7 @@ open class SecurityConfig(
     }
 
     @Bean
-    open fun bCryptPasswordEncoder(): BCryptPasswordEncoder {
+    fun bCryptPasswordEncoder(): BCryptPasswordEncoder {
         return BCryptPasswordEncoder()
     }
 }

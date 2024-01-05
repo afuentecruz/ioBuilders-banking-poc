@@ -13,6 +13,9 @@ class H2UserRepository(private val h2UserRepository: SpringDataH2UserRepository)
 
     override fun findAllUsers(): List<User> = h2UserRepository.findAll().map { it.toDomain() }
 
+    override fun findUsername(username: String): User? =
+        h2UserRepository.findUserByUsername(username)?.let { it.toDomain() }
+
     override fun createUser(user: User): User = try {
         h2UserRepository.save(user.toEntity()).toDomain()
     } catch (ex: DataIntegrityViolationException) {

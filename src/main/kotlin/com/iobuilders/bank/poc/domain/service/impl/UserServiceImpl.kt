@@ -1,6 +1,7 @@
 package com.iobuilders.bank.poc.domain.service.impl
 
 import com.iobuilders.bank.poc.domain.User
+import com.iobuilders.bank.poc.domain.exception.UsernameNotFoundException
 import com.iobuilders.bank.poc.domain.repository.UserRepository
 import com.iobuilders.bank.poc.domain.service.UserService
 import mu.KotlinLogging
@@ -15,6 +16,9 @@ class UserServiceImpl(
 
     override fun findUser(userId: Long): User =
         userRepository.findUserById(userId)
+
+    override fun findUsername(username: String): User =
+        userRepository.findUsername(username) ?: throw UsernameNotFoundException(username)
 
     override fun createUser(user: User): User {
         logger.info { "creating user ${user.username}" }

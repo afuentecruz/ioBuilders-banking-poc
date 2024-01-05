@@ -1,11 +1,11 @@
-package com.iobuilders.bank.poc.infrastructure.security
+package com.iobuilders.bank.poc.infrastructure.security.service
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.SignatureAlgorithm
 import org.springframework.stereotype.Component
 import java.util.*
 
 @Component
-class JwtTokenUtil {
+class TokenService {
 
     private val secret = "YOUR_SECRET"
     private val expiration = 6000000

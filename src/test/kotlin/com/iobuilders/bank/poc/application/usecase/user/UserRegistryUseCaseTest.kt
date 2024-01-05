@@ -10,25 +10,34 @@ import io.mockk.mockk
 import io.mockk.verify
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 
 class UserRegistryUseCaseTest {
 
     private var userService: UserService = mockk()
 
-    private val userRegistryUseCase: UserRegistryUseCase = UserRegistryUseCase(userService)
+    private val passwordEncoder: BCryptPasswordEncoder = mockk()
+
+    private val userRegistryUseCase: UserRegistryUseCase = UserRegistryUseCase(userService, passwordEncoder)
+
 
     @Test
     fun whenRegisterUser_shouldCallUserService_thenReturnCreatedUser() {
         // given
         val registerUserRequest: RegisterUserRequest =
             RegisterUserRequest(username = "usernameTest", password = "passwordTest")
+
+        val securedUserRequest: RegisterUserRequest = registerUserRequest.copy(password = "encoded-test-password")
+        val securedUser: User = securedUserRequest.toDomain();
         val createdUser: User = User.userTestData()
-        every { userService.createUser(registerUserRequest.toDomain()) } returns createdUser
+        every { passwordEncoder.encode(registerUserRequest.password) } returns "encoded-test-password"
+        every { userService.createUser(securedUser) } returns createdUser
         // when
         val result = userRegistryUseCase.registerUser(registerUserRequest)
         // then
         Assertions.assertEquals(createdUser.id, 1)
         Assertions.assertEquals(createdUser.username, result.username)
-        verify(exactly = 1) { userService.createUser(registerUserRequest.toDomain()) }
+        verify(exactly = 1) { passwordEncoder.encode("passwordTest") }
+        verify(exactly = 1) { userService.createUser(securedUserRequest.toDomain()) }
     }
 }

@@ -13,7 +13,7 @@ data class RegisterUserRequest(
     val username: String,
     @field:NotNull(message = "password is mandatory")
     @field:NotBlank(message = "password cannot be empty")
-    val password: String
+    var password: String
 ) {
     companion object
 }

@@ -1,4 +1,6 @@
-package com.iobuilders.bank.poc.infrastructure.security
+package com.iobuilders.bank.poc.infrastructure.security.filter
+import com.iobuilders.bank.poc.infrastructure.security.service.TokenService
+import com.iobuilders.bank.poc.infrastructure.security.service.UserDetailsService
 import jakarta.servlet.FilterChain
 import jakarta.servlet.ServletException
 import jakarta.servlet.http.HttpServletRequest
@@ -11,7 +13,7 @@ import org.springframework.security.web.authentication.www.BasicAuthenticationFi
 import java.io.IOException
 
 class JwtAuthorizationFilter(
-    private val jwtTokenUtil: JwtTokenUtil,
+    private val tokenService: TokenService,
     private val service: UserDetailsService,
     authManager: AuthenticationManager,
 
@@ -35,8 +37,8 @@ class JwtAuthorizationFilter(
     }
 
     private fun getAuthentication(token: String): UsernamePasswordAuthenticationToken? {
-        if (!jwtTokenUtil.isTokenValid(token)) return null
-        val email = jwtTokenUtil.getEmail(token)
+        if (!tokenService.isTokenValid(token)) return null
+        val email = tokenService.getEmail(token)
         val user = service.loadUserByUsername(email)
         return UsernamePasswordAuthenticationToken(user, null, user.authorities)
     }
