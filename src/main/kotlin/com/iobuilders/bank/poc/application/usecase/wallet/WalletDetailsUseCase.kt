@@ -20,15 +20,14 @@ class WalletDetailsUseCase(
     }
 
     fun getWalletBalance(username: String, walletId: Long): WalletBalanceResponse =
-        amlValidationService.checkWalletOwnershipByWalletId(username, walletId).run {
+        amlValidationService.checkWalletOwnership(username, walletId).run {
             walletService.findWallet(walletId).let {
-                amlValidationService.checkWalletOwnership(username, it)
                 WalletBalanceResponse.fromDomain(it)
             }
         }
 
     fun getWalletMovements(username: String, walletId: Long): List<WalletMovementResponse> =
-        amlValidationService.checkWalletOwnershipByWalletId(username, walletId).run {
+        amlValidationService.checkWalletOwnership(username, walletId).run {
             movementService.findWalletMovements(walletId).map { WalletMovementResponse.fromDomain(it) }
         }
 }

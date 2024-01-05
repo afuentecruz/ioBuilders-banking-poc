@@ -4,7 +4,7 @@ import com.iobuilders.bank.poc.application.rest.request.user.RegisterUserRequest
 import com.iobuilders.bank.poc.application.rest.request.user.toDomain
 import com.iobuilders.bank.poc.domain.User
 import com.iobuilders.bank.poc.domain.service.UserService
-import com.iobuilders.bank.poc.utils.userTestData
+import com.iobuilders.bank.poc.utils.testData
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -29,7 +29,7 @@ class UserRegistryUseCaseTest {
 
         val securedUserRequest: RegisterUserRequest = registerUserRequest.copy(password = "encoded-test-password")
         val securedUser: User = securedUserRequest.toDomain();
-        val createdUser: User = User.userTestData()
+        val createdUser: User = User.testData()
         every { passwordEncoder.encode(registerUserRequest.password) } returns "encoded-test-password"
         every { userService.createUser(securedUser) } returns createdUser
         // when

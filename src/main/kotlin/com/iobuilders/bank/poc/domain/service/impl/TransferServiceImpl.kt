@@ -11,17 +11,17 @@ class TransferServiceImpl(
     private val transferRepository: TransferRepository
 ) : TransferService {
 
-    override fun doTransfer(origin: Wallet, destination: Wallet, money: Money) {
+    override fun doTransfer(origin: Wallet, destination: Wallet, money: Money): Transfer {
         try {
             Transfer(
                 money = money, origin = origin, destination = destination, status = TransferStatus.PENDING
             ).let {
                 transferRepository.save(it).apply {
-                    transferRepository.save(this.copy(status = TransferStatus.COMPLETED))
+                    return transferRepository.save(this.copy(status = TransferStatus.COMPLETED))
                 }
             }
         } catch (ex: Exception) {
-            transferRepository.save(
+            return transferRepository.save(
                 Transfer(
                     money = money, origin = origin, destination = destination, status = TransferStatus.ERROR
                 )

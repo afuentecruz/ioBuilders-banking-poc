@@ -2,7 +2,7 @@ package com.iobuilders.bank.poc.application.usecase.user
 
 import com.iobuilders.bank.poc.domain.User
 import com.iobuilders.bank.poc.domain.service.UserService
-import com.iobuilders.bank.poc.utils.userTestData
+import com.iobuilders.bank.poc.utils.testData
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -17,7 +17,7 @@ class UserDetailsUseCaseTest {
     @Test
     fun whenFindAllUsers_shouldCallUserService_thenReturnAllUserResponseList() {
         // given
-        val user: User = User.userTestData()
+        val user: User = User.testData()
         val userList: List<User> = listOf(user)
         every { userService.findAll() } returns userList
         // when

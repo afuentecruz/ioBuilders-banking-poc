@@ -6,9 +6,9 @@ import com.iobuilders.bank.poc.domain.User
 import com.iobuilders.bank.poc.domain.Wallet
 import java.math.BigDecimal
 
-fun Wallet.Companion.walletTestData(
+fun Wallet.Companion.testData(
     id: Long? = 1L,
-    user: User = User.userTestData(),
+    user: User = User.testData(),
     balance: Money = Money(amount = BigDecimal.ZERO, currency = MoneyCurrency.EUR)
 ) = Wallet(id = id, user = user, balance = balance)
 

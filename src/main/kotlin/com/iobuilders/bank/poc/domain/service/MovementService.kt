@@ -6,6 +6,6 @@ import com.iobuilders.bank.poc.domain.MovementType
 import com.iobuilders.bank.poc.domain.Wallet
 
 interface MovementService {
-    fun doMovement(wallet: Wallet, money: Money, type: MovementType)
+    fun doMovement(wallet: Wallet, money: Money, type: MovementType): Movement
     fun findWalletMovements(walletId: Long): List<Movement>
 }

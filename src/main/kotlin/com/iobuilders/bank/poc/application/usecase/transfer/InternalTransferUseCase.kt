@@ -18,9 +18,9 @@ class InternalTransferUseCase(
 ) {
 
     fun internalTransfer(username: String, internalTransferRequest: InternalTransferRequest) {
-        val originWallet: Wallet =
+        var originWallet: Wallet =
             walletService.findWalletCurrency(internalTransferRequest.from, internalTransferRequest.currency)
-        val destinationWallet: Wallet =
+        var destinationWallet: Wallet =
             walletService.findWalletCurrency(internalTransferRequest.to, internalTransferRequest.currency)
 
         validate(username, originWallet, destinationWallet, internalTransferRequest)
@@ -30,10 +30,10 @@ class InternalTransferUseCase(
         )
 
         movementService.doMovement(originWallet, transferMoney, MovementType.WITHDRAW).also {
-            walletService.withdraw(originWallet, transferMoney.amount)
+            originWallet = walletService.withdraw(originWallet, transferMoney.amount)
         }
         movementService.doMovement(destinationWallet, transferMoney, MovementType.DEPOSIT).also {
-            walletService.deposit(destinationWallet, transferMoney.amount)
+            destinationWallet = walletService.deposit(destinationWallet, transferMoney.amount)
         }
 
         transferService.doTransfer(originWallet, destinationWallet, transferMoney)
@@ -45,7 +45,7 @@ class InternalTransferUseCase(
         destinationWallet: Wallet,
         internalTransferRequest: InternalTransferRequest
     ) {
-        amlValidationService.checkWalletOwnership(username, originWallet)
+        amlValidationService.checkWalletOwnership(username, originWallet.id!!)
         amlValidationService.checkWalletBalance(originWallet, internalTransferRequest.amount)
         amlValidationService.checkWalletsAreNotTheSame(originWallet, destinationWallet)
     }

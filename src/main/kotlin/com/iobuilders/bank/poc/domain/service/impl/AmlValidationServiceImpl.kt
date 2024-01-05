@@ -15,14 +15,7 @@ class AmlValidationServiceImpl(
     private val userService: UserService
 ) : AmlValidationService {
 
-    override fun checkWalletOwnership(username: String, wallet: Wallet) =
-        userService.findUsername(username).let { user ->
-            walletService.findUserWallets(user.id!!).let { userWallets ->
-                if (wallet !in userWallets) throw ForbiddenWalletUsageException()
-            }
-        }
-
-    override fun checkWalletOwnershipByWalletId(username: String, walletId: Long) =
+    override fun checkWalletOwnership(username: String, walletId: Long) =
         userService.findUsername(username).let { user ->
             walletService.findUserWallets(user.id!!).let { userWallets ->
                 if (walletId !in userWallets.map { it.id }) throw ForbiddenWalletUsageException()

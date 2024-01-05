@@ -3,11 +3,13 @@ package com.iobuilders.bank.poc.domain.service
 import com.iobuilders.bank.poc.domain.User
 import com.iobuilders.bank.poc.domain.exception.UserNotFoundException
 import com.iobuilders.bank.poc.domain.exception.UsernameAlreadyExistsException
+import com.iobuilders.bank.poc.domain.exception.UsernameNotFoundException
 import com.iobuilders.bank.poc.domain.repository.UserRepository
 import com.iobuilders.bank.poc.domain.service.impl.UserServiceImpl
-import com.iobuilders.bank.poc.utils.userTestData
+import com.iobuilders.bank.poc.utils.testData
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.verify
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 
@@ -30,7 +32,7 @@ class UserServiceTest {
     @Test
     fun whenFindAllUsers_shouldReturnTheUsers() {
         // given
-        val user: User = User.userTestData()
+        val user: User = User.testData()
         every { userRepository.findAllUsers() } returns (listOf(user))
         // when
         val result = userService.findAll()
@@ -56,7 +58,7 @@ class UserServiceTest {
     fun whenFindUser_shouldReturnTheUser() {
         // given
         val userId: Long = 1L
-        val user: User = User.userTestData(userId = userId)
+        val user: User = User.testData(userId = userId)
         every { userRepository.findUserById(userId) } returns (user)
         // when
         val result = userService.findUser(userId)
@@ -69,7 +71,7 @@ class UserServiceTest {
     @Test
     fun whenCreateUser_shouldReturnTheCreatedUser() {
         // given
-        val user: User = User.userTestData()
+        val user: User = User.testData()
         every { userRepository.createUser(user) } returns (user)
         // when
         val result = userService.createUser(user)
@@ -82,13 +84,46 @@ class UserServiceTest {
     @Test
     fun whenCreateUserButDataIntegrityException_shouldThrowDomainException() {
         // given
-        val user: User = User.userTestData()
+        val user: User = User.testData()
         every { userRepository.createUser(user) } throws (UsernameAlreadyExistsException(user.username))
         // when
         val result =
             Assertions.assertThrows(UsernameAlreadyExistsException::class.java) { userService.createUser(user) }
         // then
         Assertions.assertEquals("Username ${user.username} already exists", result.message)
+    }
+
+    @Test
+    fun whenFindUsernameOfNonExistingUser_shouldThrowUsernameNotFoundException() {
+        // given
+        val username: String = "username"
+        every {
+            userRepository.findUsername(username)
+        } returns null
+        // when
+        val result = Assertions.assertThrows(UsernameNotFoundException::class.java) {
+            userService.findUsername(username)
+        }
+        // then
+        verify { userRepository.findUsername(username) }
+    }
+
+    @Test
+    fun whenFindUsernameOfExistingUser_shouldReturnTheUser() {
+        // given
+        val username: String = "username"
+        val user: User = User.testData(username = username)
+        every {
+            userRepository.findUsername(username)
+        } returns user
+        // when
+        val result = userService.findUsername(username)
+
+        // then
+        Assertions.assertEquals(user.id, result.id)
+        Assertions.assertEquals(user.username, result.username)
+        Assertions.assertEquals(user.password, result.password)
+        verify { userRepository.findUsername(username) }
     }
 
 }

@@ -1,16 +1,15 @@
 package com.iobuilders.bank.poc.domain.service
 
-import com.iobuilders.bank.poc.domain.Money
-import com.iobuilders.bank.poc.domain.MoneyCurrency
-import com.iobuilders.bank.poc.domain.User
-import com.iobuilders.bank.poc.domain.Wallet
+import com.iobuilders.bank.poc.domain.*
 import com.iobuilders.bank.poc.domain.exception.UserWalletNotFoundException
+import com.iobuilders.bank.poc.domain.exception.WalletCurrencyNotFoundException
+import com.iobuilders.bank.poc.domain.exception.WalletNotFoundException
 import com.iobuilders.bank.poc.domain.repository.WalletRepository
 import com.iobuilders.bank.poc.domain.service.impl.WalletServiceImpl
-import com.iobuilders.bank.poc.utils.userTestData
-import com.iobuilders.bank.poc.utils.walletTestData
+import com.iobuilders.bank.poc.utils.testData
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.verify
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import java.math.BigDecimal
@@ -24,10 +23,11 @@ class WalletServiceTest {
     @Test
     fun whenCreateWalletOfExistingUser_shouldReturnTheCreatedWallet() {
         // given
-        val user: User = User.userTestData()
+        val user: User = User.testData()
         val wallet: Wallet =
-            Wallet.walletTestData(id = null, balance = Money(amount = BigDecimal.ZERO, currency = MoneyCurrency.EUR))
-        val createdWallet: Wallet = Wallet.walletTestData(balance = Money(amount = BigDecimal.ZERO, currency = MoneyCurrency.EUR))
+            Wallet.testData(id = null, balance = Money(amount = BigDecimal.ZERO, currency = MoneyCurrency.EUR))
+        val createdWallet: Wallet =
+            Wallet.testData(balance = Money(amount = BigDecimal.ZERO, currency = MoneyCurrency.EUR))
         every { walletRepository.saveWallet(wallet) } returns (createdWallet)
         // when
         val result = walletService.createWallet(user)
@@ -43,8 +43,8 @@ class WalletServiceTest {
     @Test
     fun whenFindWalletsByUserIdOfExistingUser_shouldReturnTheWallets() {
         // given
-        val user: User = User.userTestData()
-        val wallet: Wallet = Wallet.walletTestData(user = user)
+        val user: User = User.testData()
+        val wallet: Wallet = Wallet.testData(user = user)
         every { walletRepository.findWalletsByUserId(user.id!!) } returns (listOf(wallet))
         // when
         val result = walletService.findUserWallets(user.id!!)
@@ -61,7 +61,7 @@ class WalletServiceTest {
     @Test
     fun whenFindWalletsByUserIdOfExistingUserButWithNoWallets_shouldThrowException() {
         // given
-        val user: User = User.userTestData()
+        val user: User = User.testData()
         every { walletRepository.findWalletsByUserId(user.id!!) } throws (UserWalletNotFoundException(user.id!!))
         // when
         val result =
@@ -69,4 +69,96 @@ class WalletServiceTest {
         // then
         Assertions.assertEquals("Wallet for userId ${user.id} not found", result.message)
     }
+
+    @Test
+    fun whenFindWalletCurrencyOfANonExistingWalletCurrencyPair_shouldThrowWalletCurrencyNotFoundException() {
+        // given
+        val walletId: Long = 1L
+        val currency: String = MoneyCurrency.EUR.name
+        every { walletRepository.findWalletCurrency(walletId, currency) } throws WalletCurrencyNotFoundException(
+            walletId, currency
+        )
+        // when
+        val result = Assertions.assertThrows(WalletCurrencyNotFoundException::class.java) {
+            walletService.findWalletCurrency(
+                walletId, currency
+            )
+        }
+        // then
+        Assertions.assertEquals("Wallet with id $walletId and currency $currency not found", result.message)
+    }
+
+    @Test
+    fun whenFindWalletCurrencyOfAnExistingWalletCurrencyPair_shouldReturnTheWallet() {
+        // given
+        val wallet: Wallet = Wallet.testData()
+        every { walletRepository.findWalletCurrency(wallet.id!!, wallet.balance.currency.name) } returns wallet
+        // when
+        val result = walletService.findWalletCurrency(
+            wallet.id!!, wallet.balance.currency.name
+        )
+        // then
+        Assertions.assertEquals(wallet.id, result.id)
+        Assertions.assertEquals(wallet.balance, result.balance)
+        Assertions.assertEquals(wallet.user, result.user)
+    }
+
+    @Test
+    fun whenFindWalletOfANonExistingWallet_shouldThrowWalletNotFoundException() {
+        // given
+        val walletId: Long = 1L
+        every { walletRepository.findWallet(walletId) } throws WalletNotFoundException(walletId)
+        // when
+        val result = Assertions.assertThrows(WalletNotFoundException::class.java) {
+            walletService.findWallet(walletId)
+        }
+        // then
+        Assertions.assertEquals("Wallet with id $walletId not found", result.message)
+    }
+
+    @Test
+    fun whenFindWalletOfAnExistingWallet_shouldReturnTheWallet() {
+        // given
+        val wallet: Wallet = Wallet.testData()
+        every { walletRepository.findWallet(wallet.id!!) } returns wallet
+        // when
+        val result = walletService.findWallet(wallet.id!!)
+        // then
+        Assertions.assertEquals(wallet.id, result.id)
+        Assertions.assertEquals(wallet.balance, result.balance)
+        Assertions.assertEquals(wallet.user, result.user)
+    }
+
+    @Test
+    fun whenWalletDeposit_shouldSaveTheDepositedWallet() {
+        // given
+        val amount = BigDecimal.TEN
+        val wallet: Wallet = Wallet.testData()
+        val walletDeposit = wallet.addAmount(amount)
+        every { walletRepository.saveWallet(walletDeposit) } returns walletDeposit
+        // when
+        val result = walletService.deposit(wallet, amount)
+        // then
+        Assertions.assertEquals(walletDeposit.id, result.id)
+        Assertions.assertEquals(walletDeposit.user, result.user)
+        Assertions.assertEquals(walletDeposit.balance, result.balance)
+        verify { walletRepository.saveWallet(walletDeposit) }
+    }
+
+    @Test
+    fun whenWalletWithdraw_shouldSaveTheWithdrawedWallet() {
+        // given
+        val amount = BigDecimal.TEN
+        val wallet: Wallet = Wallet.testData()
+        val walletWithdraw = wallet.minusAmount(amount)
+        every { walletRepository.saveWallet(walletWithdraw) } returns walletWithdraw
+        // when
+        val result = walletService.withdraw(wallet, amount)
+        // then
+        Assertions.assertEquals(walletWithdraw.id, result.id)
+        Assertions.assertEquals(walletWithdraw.user, result.user)
+        Assertions.assertEquals(walletWithdraw.balance, result.balance)
+        verify { walletRepository.saveWallet(walletWithdraw) }
+    }
+
 }

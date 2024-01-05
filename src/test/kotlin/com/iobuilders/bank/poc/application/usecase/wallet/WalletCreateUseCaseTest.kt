@@ -5,8 +5,7 @@ import com.iobuilders.bank.poc.domain.Wallet
 import com.iobuilders.bank.poc.domain.exception.UsernameNotFoundException
 import com.iobuilders.bank.poc.domain.service.UserService
 import com.iobuilders.bank.poc.domain.service.WalletService
-import com.iobuilders.bank.poc.utils.userTestData
-import com.iobuilders.bank.poc.utils.walletTestData
+import com.iobuilders.bank.poc.utils.testData
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -24,8 +23,8 @@ class WalletCreateUseCaseTest {
     @Test
     fun whenCreateWalletForExistingUser_thenReturnCreatedWalletWithZeroBalance() {
         // given
-        val user: User = User.userTestData()
-        val wallet: Wallet = Wallet.walletTestData(user = user)
+        val user: User = User.testData()
+        val wallet: Wallet = Wallet.testData(user = user)
         every { userService.findUsername(user.username) } returns (user)
         every { walletService.createWallet(user) } returns (wallet)
         // when

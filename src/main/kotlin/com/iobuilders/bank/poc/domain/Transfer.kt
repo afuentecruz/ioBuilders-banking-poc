@@ -6,4 +6,6 @@ data class Transfer(
     val origin: Wallet,
     val destination: Wallet,
     val status: TransferStatus
-)
+){
+    companion object
+}

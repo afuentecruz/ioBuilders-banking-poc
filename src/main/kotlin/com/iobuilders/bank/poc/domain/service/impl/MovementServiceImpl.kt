@@ -11,7 +11,7 @@ class MovementServiceImpl(
     private val movementRepository: MovementRepository
 ) : MovementService {
 
-    override fun doMovement(wallet: Wallet, money: Money, type: MovementType): Unit =
+    override fun doMovement(wallet: Wallet, money: Money, type: MovementType): Movement =
         Movement(type = type, money = money, wallet = wallet)
             .let { movementRepository.save(it) }
 
