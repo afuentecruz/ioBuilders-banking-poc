@@ -56,7 +56,7 @@ class WalletDepositUseCaseTest {
             movementService.doMovement(
                 wallet, Money(walletDepositRequest.amount, wallet.balance.currency), MovementType.DEPOSIT
             )
-        } returns Movement.testData()
+        } returns Movement.testData(type = MovementType.DEPOSIT)
         every {
             walletService.deposit(wallet, walletDepositRequest.amount)
         } returns wallet.copy(

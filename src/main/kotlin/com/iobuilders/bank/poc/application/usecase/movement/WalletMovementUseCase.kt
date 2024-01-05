@@ -9,7 +9,6 @@ class WalletMovementUseCase(
     private val amlValidationService: AmlValidationService,
     private val movementService: MovementService
 ) {
-
     fun getWalletMovements(username: String, walletId: Long): List<WalletMovementResponse> =
         amlValidationService.checkWalletOwnership(username, walletId).run {
             movementService.findWalletMovements(walletId).map { WalletMovementResponse.fromDomain(it) }

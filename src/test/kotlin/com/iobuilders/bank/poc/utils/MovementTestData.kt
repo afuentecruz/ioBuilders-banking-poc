@@ -6,10 +6,15 @@ import com.iobuilders.bank.poc.domain.MovementType
 import com.iobuilders.bank.poc.domain.Wallet
 import java.time.LocalDateTime
 
-fun Movement.Companion.testData(): Movement = Movement(
-    movementId = 1L,
-    type = MovementType.DEPOSIT,
-    money = Money.testData(),
-    wallet = Wallet.testData(),
+fun Movement.Companion.testData(
+    movementId: Long? = 1L,
+    type: MovementType,
+    money: Money = Money.testData(),
+    wallet: Wallet = Wallet.testData(),
+): Movement = Movement(
+    movementId = movementId,
+    type = type,
+    money = money,
+    wallet = wallet,
     creationDate = LocalDateTime.now()
 )

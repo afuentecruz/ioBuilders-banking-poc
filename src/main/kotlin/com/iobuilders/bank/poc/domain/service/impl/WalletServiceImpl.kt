@@ -27,11 +27,8 @@ class WalletServiceImpl(
 
 
     override fun findWalletCurrency(walletId: Long, currency: String): Wallet =
-        walletRepository.findWalletCurrency(walletId, currency) ?: throw WalletCurrencyNotFoundException(
-            walletId,
-            currency
-        )
-
+        walletRepository.findWalletCurrency(walletId, currency)
+            ?: throw WalletCurrencyNotFoundException(walletId, currency)
 
     override fun deposit(wallet: Wallet, amount: BigDecimal): Wallet =
         wallet.addAmount(amount).apply { walletRepository.saveWallet(this) }

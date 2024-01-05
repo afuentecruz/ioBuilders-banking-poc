@@ -8,8 +8,8 @@ import com.iobuilders.bank.poc.domain.service.MovementService
 import com.iobuilders.bank.poc.domain.service.WalletService
 
 class WithdrawMovementUseCase(
-    private val movementService: MovementService,
-    private val walletService: WalletService
+    private val walletService: WalletService,
+    private val movementService: MovementService
 ) {
     fun withdrawMovement(wallet: Wallet, money: Money): Movement =
         walletService.withdraw(wallet, money.amount).let {

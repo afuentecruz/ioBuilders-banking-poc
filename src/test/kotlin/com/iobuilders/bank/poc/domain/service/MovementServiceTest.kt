@@ -52,7 +52,7 @@ class MovementServiceTest {
     fun whenFindWalletWithMovements_shouldReturnTheMovementsList() {
         // given
         val walletId: Long = 1L
-        val movements: List<Movement> = listOf(Movement.testData())
+        val movements: List<Movement> = listOf(Movement.testData(type = MovementType.DEPOSIT))
         every { movementRepository.findAllWalletMovements(walletId) } returns movements
         // when
         val result = movementService.findWalletMovements(walletId)

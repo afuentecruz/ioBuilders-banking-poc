@@ -242,12 +242,12 @@ class InternalTransferUseCaseTest {
         } returns completedTransfer
         every {
             withdrawMovementUseCase.withdrawMovement(origin, transferMoney)
-        } returns Movement.testData()
+        } returns Movement.testData(type = MovementType.WITHDRAW)
         every {
             depositMovementUseCase.depositMovement(destination, transferMoney)
-        } returns Movement.testData()
+        } returns Movement.testData(type = MovementType.DEPOSIT)
         // when
-        val result = internalTransferUseCase.internalTransfer(user.username, transferRequest)
+        internalTransferUseCase.internalTransfer(user.username, transferRequest)
 
         // then
         verify { walletService.findWalletCurrency(origin.id!!, currency) }
@@ -300,7 +300,7 @@ class InternalTransferUseCaseTest {
         } returns errorTransfer
 
         // when
-        val result = internalTransferUseCase.internalTransfer(user.username, transferRequest)
+        internalTransferUseCase.internalTransfer(user.username, transferRequest)
 
         // then
         verify { walletService.findWalletCurrency(origin.id!!, currency) }
