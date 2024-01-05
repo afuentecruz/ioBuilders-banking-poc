@@ -1,9 +1,10 @@
+package com.iobuilders.bank.poc.infrastructure.security
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.iobuilders.bank.poc.application.rest.request.user.RegisterUserRequest
-import com.iobuilders.bank.poc.infrastructure.configuration.JwtTokenUtil
+import com.iobuilders.bank.poc.application.rest.request.user.LoginRequest
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
+import org.springframework.http.HttpHeaders
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.Authentication
@@ -19,7 +20,7 @@ class JwtAuthenticationFilter(
     UsernamePasswordAuthenticationFilter() {
 
     override fun attemptAuthentication(req: HttpServletRequest, response: HttpServletResponse): Authentication {
-        val credentials = ObjectMapper().readValue(req.inputStream, RegisterUserRequest::class.java)
+        val credentials = ObjectMapper().readValue(req.inputStream, LoginRequest::class.java)
         val auth = UsernamePasswordAuthenticationToken(
             credentials.username,
             credentials.password,
@@ -32,10 +33,12 @@ class JwtAuthenticationFilter(
         req: HttpServletRequest?, res: HttpServletResponse, chain: FilterChain?,
         auth: Authentication
     ) {
-        val username = (auth.principal as String)
+        val username = (auth.principal as UserSecurity).username
         val token: String = jwtTokenUtil.generateToken(username)
         res.addHeader("Authorization", token)
         res.addHeader("Access-Control-Expose-Headers", "Authorization")
+        res.addHeader(HttpHeaders.CONTENT_TYPE, "Application/json")
+        res.writer.write("{\"token\": \"$token\"}")
     }
 
     override fun unsuccessfulAuthentication(

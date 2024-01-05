@@ -10,13 +10,17 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RestController
+import java.security.Principal
 
 @RestController
 class UserController(val registerUserUseCase: UserRegistryUseCase, val findUserUseCase: UserDetailsUseCase) {
 
     @GetMapping(path = ["/users"])
-    fun findAllUsers(): ResponseEntity<List<UserResponse>> =
+    fun findAllUsers(principal: Principal): ResponseEntity<List<UserResponse>> = run {
+        println("yoooooooooooo " + principal.name)
         findUserUseCase.findAllUsers().let { ResponseEntity.ok(it) }
+
+    }
 
     @PostMapping(path = ["/users/registry"])
     fun createUser(@Valid @RequestBody registerUserRequest: RegisterUserRequest): ResponseEntity<UserResponse> =

@@ -5,11 +5,16 @@ import com.iobuilders.bank.poc.application.rest.request.user.toDomain
 import com.iobuilders.bank.poc.application.rest.response.user.UserResponse
 import com.iobuilders.bank.poc.application.rest.response.user.fromDomain
 import com.iobuilders.bank.poc.domain.service.UserService
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 
-class UserRegistryUseCase(private val userService: UserService) {
+class UserRegistryUseCase(
+    private val userService: UserService,
+    private val passwordEncoder: BCryptPasswordEncoder
+) {
 
     fun registerUser(registerUserRequest: RegisterUserRequest): UserResponse =
         registerUserRequest.toDomain().let {
-            UserResponse.fromDomain(userService.createUser(it))
+            val securedUser = it.copy(password = passwordEncoder.encode(it.password))
+            UserResponse.fromDomain(userService.createUser(securedUser))
         }
 }

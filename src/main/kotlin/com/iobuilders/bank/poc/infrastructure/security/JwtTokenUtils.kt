@@ -1,4 +1,4 @@
-package com.iobuilders.bank.poc.infrastructure.configuration
+package com.iobuilders.bank.poc.infrastructure.security
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.SignatureAlgorithm
 import org.springframework.stereotype.Component

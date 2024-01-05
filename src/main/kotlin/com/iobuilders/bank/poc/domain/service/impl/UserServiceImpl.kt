@@ -6,7 +6,7 @@ import com.iobuilders.bank.poc.domain.service.UserService
 import mu.KotlinLogging
 
 class UserServiceImpl(
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
 ) : UserService {
 
     private val logger = KotlinLogging.logger {}

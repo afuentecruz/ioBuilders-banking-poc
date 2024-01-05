@@ -14,14 +14,16 @@ import com.iobuilders.bank.poc.domain.service.impl.UserServiceImpl
 import com.iobuilders.bank.poc.domain.service.impl.WalletServiceImpl
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 
 @Configuration
 class UseCaseConfiguration {
 
     @Bean
     fun createUserUseCase(
-        userService: UserServiceImpl
-    ): UserRegistryUseCase = UserRegistryUseCase(userService)
+        userService: UserServiceImpl,
+        passwordEncoder: BCryptPasswordEncoder
+    ): UserRegistryUseCase = UserRegistryUseCase(userService, passwordEncoder)
 
     @Bean
     fun findUserUseCase(

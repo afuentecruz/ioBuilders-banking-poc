@@ -1,7 +1,5 @@
-package com.iobuilders.bank.poc.infrastructure.configuration
+package com.iobuilders.bank.poc.infrastructure.security
 
-import JwtAuthenticationFilter
-import com.iobuilders.bank.poc.domain.service.UserService
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpMethod
@@ -14,8 +12,7 @@ import org.springframework.security.web.SecurityFilterChain
 
 @Configuration
 open class SecurityConfig(
-    private val userSecurityService: UserSecurityService,
-    private val userService: UserService
+    private val userDetailsService: UserDetailsService,
 ) {
     private val jwtToken = JwtTokenUtil()
 
@@ -23,7 +20,7 @@ open class SecurityConfig(
         val authenticationManagerBuilder = http.getSharedObject(
             AuthenticationManagerBuilder::class.java
         )
-        authenticationManagerBuilder.userDetailsService(userSecurityService)
+        authenticationManagerBuilder.userDetailsService(userDetailsService)
         return authenticationManagerBuilder.build()
     }
 
@@ -33,15 +30,13 @@ open class SecurityConfig(
         // Put your endpoint to create/sign, otherwise spring will secure it as
         // well you won't be able to do any request
         http.authorizeHttpRequests {
-            it.requestMatchers(HttpMethod.POST, "/users/registry").permitAll()
-            it.requestMatchers(HttpMethod.POST).authenticated()
-        }.csrf{
-         it.ignoringRequestMatchers("/users/registry")
-        }
+            it.requestMatchers(HttpMethod.POST, "/users/registry", "/login").permitAll()
+            it.anyRequest().authenticated()
+        }.csrf { it.disable() }
             .authenticationManager(authenticationManager)
             .sessionManagement { it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
             .addFilter(JwtAuthenticationFilter(jwtToken, authenticationManager))
-            .addFilter(JwtAuthorizationFilter(jwtToken, userService, authenticationManager))
+            .addFilter(JwtAuthorizationFilter(jwtToken, userDetailsService, authenticationManager))
 
         return http.build()
     }

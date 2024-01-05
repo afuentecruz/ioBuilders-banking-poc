@@ -16,7 +16,7 @@ class ServiceConfiguration {
 
     @Bean
     fun userServiceImpl(
-        userRepository: UserRepository
+        userRepository: UserRepository,
     ): UserServiceImpl = UserServiceImpl(userRepository)
 
     @Bean

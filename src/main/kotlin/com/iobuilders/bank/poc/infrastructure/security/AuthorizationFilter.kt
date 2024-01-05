@@ -1,6 +1,4 @@
-package com.iobuilders.bank.poc.infrastructure.configuration
-
-import com.iobuilders.bank.poc.domain.service.UserService
+package com.iobuilders.bank.poc.infrastructure.security
 import jakarta.servlet.FilterChain
 import jakarta.servlet.ServletException
 import jakarta.servlet.http.HttpServletRequest
@@ -14,13 +12,16 @@ import java.io.IOException
 
 class JwtAuthorizationFilter(
     private val jwtTokenUtil: JwtTokenUtil,
-    private val userService: UserService,
+    private val service: UserDetailsService,
     authManager: AuthenticationManager,
-) : BasicAuthenticationFilter(authManager) {
+
+    ) : BasicAuthenticationFilter(authManager) {
 
     @Throws(IOException::class, ServletException::class)
     override fun doFilterInternal(
-        req: HttpServletRequest, res: HttpServletResponse, chain: FilterChain
+        req: HttpServletRequest,
+        res: HttpServletResponse,
+        chain: FilterChain
     ) {
         val header = req.getHeader(AUTHORIZATION)
         if (header == null || !header.startsWith("Bearer ")) {
@@ -36,8 +37,7 @@ class JwtAuthorizationFilter(
     private fun getAuthentication(token: String): UsernamePasswordAuthenticationToken? {
         if (!jwtTokenUtil.isTokenValid(token)) return null
         val email = jwtTokenUtil.getEmail(token)
-        val userId = 1L
-        val user = userService.findUser(1L)
-        return UsernamePasswordAuthenticationToken(user, null)
+        val user = service.loadUserByUsername(email)
+        return UsernamePasswordAuthenticationToken(user, null, user.authorities)
     }
 }
