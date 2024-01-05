@@ -2,7 +2,7 @@ package com.iobuilders.bank.poc.application.usecase.wallet
 
 import com.iobuilders.bank.poc.domain.User
 import com.iobuilders.bank.poc.domain.Wallet
-import com.iobuilders.bank.poc.domain.exception.UserNotFoundException
+import com.iobuilders.bank.poc.domain.exception.UsernameNotFoundException
 import com.iobuilders.bank.poc.domain.service.UserService
 import com.iobuilders.bank.poc.domain.service.WalletService
 import com.iobuilders.bank.poc.utils.userTestData
@@ -24,10 +24,9 @@ class WalletCreateUseCaseTest {
     @Test
     fun whenCreateWalletForExistingUser_thenReturnCreatedWalletWithZeroBalance() {
         // given
-        val userId: Long = 1L
-        val user: User = User.userTestData(userId = userId)
+        val user: User = User.userTestData()
         val wallet: Wallet = Wallet.walletTestData(user = user)
-        every { userService.findUser(userId) } returns (user)
+        every { userService.findUsername(user.username) } returns (user)
         every { walletService.createWallet(user) } returns (wallet)
         // when
         val result = walletCreateUseCase.createUserWallet(user.username)
@@ -40,15 +39,17 @@ class WalletCreateUseCaseTest {
     @Test
     fun whenCreateWalletForNonExistingUser_shouldThrowException() {
         // given
-        val userId: Long = 1L
         val username: String = "usernameTest"
-        every { userService.findUser(userId) } throws (UserNotFoundException(userId))
+        every { userService.findUsername(username) } throws (UsernameNotFoundException(username))
         // when
-        val result =
-            Assertions.assertThrows(UserNotFoundException::class.java) { walletCreateUseCase.createUserWallet(username) }
+        val result = Assertions.assertThrows(UsernameNotFoundException::class.java) {
+            walletCreateUseCase.createUserWallet(
+                username
+            )
+        }
         // then
-        Assertions.assertEquals("User with id $userId not found", result.message)
-        verify(exactly = 1) { userService.findUser(userId) }
+        Assertions.assertEquals("User with username $username not found", result.message)
+        verify(exactly = 1) { userService.findUsername(username) }
     }
 
 }

@@ -1,11 +1,13 @@
 package com.iobuilders.bank.poc.application.usecase.wallet
 
+import com.iobuilders.bank.poc.domain.User
 import com.iobuilders.bank.poc.domain.Wallet
 import com.iobuilders.bank.poc.domain.exception.UserWalletNotFoundException
 import com.iobuilders.bank.poc.domain.service.AmlValidationService
 import com.iobuilders.bank.poc.domain.service.MovementService
 import com.iobuilders.bank.poc.domain.service.UserService
 import com.iobuilders.bank.poc.domain.service.WalletService
+import com.iobuilders.bank.poc.utils.userTestData
 import com.iobuilders.bank.poc.utils.walletTestData
 import io.mockk.every
 import io.mockk.mockk
@@ -27,11 +29,12 @@ class WalletDetailsUseCaseTest {
     fun whenFindWalletsForUserWithNoWallet_shouldThrowException() {
         // given
         val userId: Long = 1L
-        val username: String = "usernameTest"
+        val user: User = User.userTestData()
+        every { userService.findUsername(user.username) } returns (user)
         every { walletService.findUserWallets(userId) } throws UserWalletNotFoundException(userId)
         // when
         val result = Assertions.assertThrows(UserWalletNotFoundException::class.java) {
-            walletDetailsUseCase.getUserWallets(username)
+            walletDetailsUseCase.getUserWallets(user.username)
         }
         // then
         Assertions.assertEquals("Wallet for userId $userId not found", result.message)
@@ -42,11 +45,12 @@ class WalletDetailsUseCaseTest {
     fun whenFindWalletsForCreatedUserWallets_shouldReturnTheWallets() {
         // given
         val userId: Long = 1L
-        val username: String = "usernameTest"
+        val user: User = User.userTestData()
         val wallet = Wallet.walletTestData()
+        every { userService.findUsername(user.username) } returns (user)
         every { walletService.findUserWallets(userId) } returns (listOf(wallet))
         // when
-        val result = walletDetailsUseCase.getUserWallets(username)
+        val result = walletDetailsUseCase.getUserWallets(user.username)
         // then
         Assertions.assertTrue(result.isNotEmpty())
         Assertions.assertEquals(wallet.id, result.first().id)
