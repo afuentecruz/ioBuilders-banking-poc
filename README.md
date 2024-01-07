@@ -1,5 +1,5 @@
 # ioBuildersBankPoC
-This repo provides an implementation for the banking PoC tech test given by ioBuilders
+This repo provides an implementation for the banking PoC tech test ioBuilders proposal
 ### Stack 
 - Kotlin 1.9.2
 - SpringBoot 3.2.1
@@ -9,10 +9,10 @@ This repo provides an implementation for the banking PoC tech test given by ioBu
 
 http://localhost:8080/swagger-ui/index.html
 
-In order to try the swagger endpoints you must provide a valid token
+In order to try swagger endpoints you must provide a valid token
 
 ## Security
-Note all api endpoints are secured using spring security except `/users/registry` and `login`, in order to operate with the remaining operations you must include the bearer token included in the login response
+Note all api endpoints are secured using spring security except `/users/registry` and `/login`, in order to operate with the remaining endpoints you must include the bearer token provided in the login response
 
 ## Postman collection
 A complete postman collection is available under `src/test/resources/` or simply [here](https://github.com/afuentecruz/ioBuilders-banking-poc/blob/main/src/test/resources/ioBuilders%20banking%20PoC.postman_collection.json)

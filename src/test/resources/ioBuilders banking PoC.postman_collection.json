@@ -518,14 +518,14 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "localhost:8080/movements/wallets/:walletId",
+							"raw": "localhost:8080/movements/wallet/:walletId",
 							"host": [
 								"localhost"
 							],
 							"port": "8080",
 							"path": [
 								"movements",
-								"wallets",
+								"wallet",
 								":walletId"
 							],
 							"variable": [
